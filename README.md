@@ -87,3 +87,9 @@ manual instructions are in `docs/step-2.md`. Build success alone does not verify
 hosted integration. Run `node scripts/verify-leads.mjs` against development only.
 
 Auth implementation follows the official [Supabase SSR guide](https://supabase.com/docs/guides/auth/server-side/creating-a-client).
+
+Step 4 explicit call logging, protected confirmations and counting rules are in
+[docs/step-4.md](docs/step-4.md). Actual local/live test evidence and remaining
+manual/hosting limitations are in [docs/step-4-status.md](docs/step-4-status.md).
+`npm run verify:calls` uses disposable fixtures against the configured development
+project and preserves existing data; build `.next-calls-check` first as documented.

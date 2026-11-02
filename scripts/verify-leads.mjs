@@ -170,7 +170,7 @@ try{
  assert.equal((await (await outsiderBrowser.context.request.get(`${base}/api/leads/${stored.id}/history`)).json()).total,0);await outsiderBrowser.context.close();
  const anon=createClient(projectUrl,config.local.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false}});assert.ok((await anon.from('leads').select('*')).error);
  await assert.rejects(db.query("update public.lead_statuses set label='Confirm' where id=$1",[retry.id]),/check constraint/);
- console.log('PASS: Manager shared read/edit, Creative Analyst customer denial in UI/API/database, cross-organization read/write/history isolation, direct protected writes/history deletion denied, anonymous database denial, Confirm remains disabled.');
+ console.log('PASS: Manager shared read/edit, Creative Analyst customer denial in UI/API/database, cross-organization read/write/history isolation, direct protected writes/history deletion denied, anonymous database denial, non-confirmation statuses cannot be relabeled to bypass confirmation tracking.');
  stage='authentication regression';
  await page.reload();await page.getByRole('heading',{name:'All Leads',exact:true}).waitFor();
  await page.getByRole('button',{name:'Sign out',exact:true}).click();await page.waitForURL('**/login');

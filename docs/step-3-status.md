@@ -102,3 +102,11 @@ No existing Admin password was requested/replayed; real automated tests used onl
 synthetic credentials held in memory. Hosted deployment is not performed here.
 Step 3 core checks pass; full real-mail acceptance awaits SMTP setup/inbox testing
 and the user's manual Team verification. No Step 4 work has started.
+
+## Acceptance review before Step 4 — 2026-11-02
+
+The user confirmed invitation activation/username-password login, no Telecaller Team menu, shared synthetic lead visibility and Notes saving. These manual checks were accepted without repeating them.
+
+The current email-free acceptance source is `manual-team-verification.md` (migrations 008/009), not the older SMTP narrative above. It already records live expiry/revocation/single-use rejection (check 3), concurrent acceptance and Auth-only partial recovery without password replacement (check 4), Admin-only/cross-organization backend permissions (check 5), and existing-session role/deactivation enforcement plus concurrent last-active-Admin protection (check 6). `step-3-status.md` historical live check 8 additionally records concurrent deactivation/deletion guarding; that guard was not replaced by manual onboarding. Current `manual-team.test.mjs` and `team.test.mjs` re-executed as Step 4 regression tests and passed. No unverified acceptance item in the requested Step 3 list was found; no protection was weakened and no existing user was recreated.
+
+The old SMTP/external-inbox pending notes are historical and do not block the current manual invitation implementation. Hosted deployment remains distinct from local development-project verification. Step 4 is documented separately in `step-4.md` and `step-4-status.md`; no later step is authorized.

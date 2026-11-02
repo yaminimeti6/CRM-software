@@ -32,3 +32,7 @@ fieldset { border:1px solid #dce3ed; margin:16px 0; } button:disabled { cursor:d
 .history-list > li { padding:18px 0; border-top:1px solid #ccd6e4; }
 .history-list h3 { margin:0 0 8px; }.history-changes { background:white; }
 .history-changes th { position:static; }.history-changes td { white-space:pre-wrap; overflow-wrap:anywhere; max-width:500px; }
+.call-panel { margin:24px 0; padding:24px; background:white; border:1px solid #bdcde0; border-radius:10px; }
+.call-summary { display:flex; flex-wrap:wrap; gap:24px; }.call-summary dt { margin-top:0; }.call-summary dd { font-size:1.2rem; }
+.call-panel textarea { display:block; width:100%; min-height:90px; padding:12px; border:1px solid #9cabbc; border-radius:6px; font:inherit; margin-top:8px; }
+.call-text { white-space:pre-wrap; overflow-wrap:anywhere; }

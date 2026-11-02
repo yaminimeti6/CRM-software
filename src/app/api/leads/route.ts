@@ -10,7 +10,7 @@ export async function GET(request:Request) {
   const db=await createSupabase();
   const [leads,statuses,fields]=await Promise.all([
     db.rpc('search_leads',{p_search:q.trim(),p_status:status||null,p_offset:(page-1)*size,p_limit:size}),
-    db.from('lead_statuses').select('id,label,active,is_new').order('sort_order').order('label'),
+    db.from('lead_statuses').select('id,label,active,is_new,category').order('sort_order').order('label'),
     db.from('lead_field_definitions').select('field_key').order('field_key'),
   ]);
   if(leads.error||statuses.error||fields.error)return databaseFailure(leads.error??statuses.error??fields.error!);
