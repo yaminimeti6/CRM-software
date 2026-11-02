@@ -1,0 +1,2 @@
+﻿import {createSupabase} from '@/lib/supabase';import {requireLeadStaff,reply,databaseFailure} from '@/lib/lead-api';import {isUuid} from '@/lib/lead-input';
+export async function GET(_r:Request,{params}:{params:Promise<{id:string}>}){const a=await requireLeadStaff();if(a.error)return a.error;const {id}=await params;if(!isUuid(id))return reply({error:'Invalid callback.'},400);const db=await createSupabase(),r=await db.rpc('follow_up_history',{p_id:id});return r.error?databaseFailure(r.error):reply(r.data);}

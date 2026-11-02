@@ -13,7 +13,8 @@
     "verify:login": "node scripts/verify-login.mjs",
     "verify:team": "node scripts/verify-manual-team.mjs",
     "configure:team": "node scripts/configure-team.mjs",
-    "verify:calls": "node scripts/verify-calls.mjs"
+    "verify:calls": "node scripts/verify-calls.mjs",
+    "verify:follow-ups": "node scripts/verify-follow-ups.mjs"
   },
   "keywords": [],
   "author": "",

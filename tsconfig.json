@@ -42,7 +42,9 @@
     ".next-manual-check/types/**/*.ts",
     ".next-manual-check/dev/types/**/*.ts",
     ".next-calls-check/types/**/*.ts",
-    ".next-calls-check/dev/types/**/*.ts"
+    ".next-calls-check/dev/types/**/*.ts",
+    ".next-followups-check/types/**/*.ts",
+    ".next-followups-check/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

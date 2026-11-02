@@ -35,6 +35,7 @@ export async function login(_state: { error: string }, form: FormData) {
 }
 export async function logout() {
   const client = await createSupabase();
+  await client.rpc('stop_my_calling_session');
   const { error } = await client.auth.signOut({ scope: 'local' });
   if (error) redirect('/app?logout=failed');
   redirect('/login');

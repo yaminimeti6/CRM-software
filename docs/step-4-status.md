@@ -43,3 +43,7 @@ The prior full Step 2/3 live suites were not blindly rerun: their acceptance evi
 ## Limitations and remaining user verification
 
 No implementation/configuration blocker remains for this local development project. Production hosting/deployment has not been performed. Existing real users' interactive sessions/passwords were not replayed; the user's Step 3 confirmations remain the evidence for those real accounts. The user has not yet manually exercised Step 4 with their own test lead; exact steps are in `step-4.md`. This does not invalidate the separate successful synthetic live acceptance run. No Step 5 or additional module was started.
+
+## Subsequent user acceptance (before Step 5)
+
+The user subsequently accepted Step 4 manually: call logging survives refresh, attempts count correctly, confirmation history remains accurate, and repeatedly saving Confirm adds neither attempts nor confirmation events. This supersedes the earlier pending manual-verification note above. Step 5 evidence is maintained separately in `step-5-status.md`; the historical Step 4 test record remains unchanged.
