@@ -15,7 +15,8 @@
     "configure:team": "node scripts/configure-team.mjs",
     "verify:calls": "node scripts/verify-calls.mjs",
     "verify:follow-ups": "node scripts/verify-follow-ups.mjs",
-    "verify:ingestion": "node scripts/verify-ingestion.mjs"
+    "verify:ingestion": "node scripts/verify-ingestion.mjs",
+    "verify:dynamic-fields": "node scripts/verify-dynamic-fields.mjs"
   },
   "keywords": [],
   "author": "",
