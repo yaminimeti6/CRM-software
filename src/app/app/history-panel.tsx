@@ -18,7 +18,7 @@ export function HistoryPanel({leadId,onClose}:{leadId:string;onClose:()=>void}){
     <div className="history-heading"><h2>Lead history</h2><button ref={closeButton} className="secondary" onClick={onClose}>Close history</button></div>
     <p>Newest changes first · Asia/Kolkata (IST)</p>
     {loading?<p role="status">Loading history…</p>:error?<p role="alert">{error}</p>:entries.length===0?<p>No recorded history is available.</p>:<ol className="history-list">{entries.map(entry=><li key={entry.id}>
-      <h3>{entry.version===1?'Lead created':entry.activity_type==='call'?'Call recorded':'Lead updated'}</h3>
+      <h3>{entry.activity_type==='imported'?'Historical lead imported':entry.version===1?'Lead created':entry.activity_type==='call'?'Call recorded':'Lead updated'}</h3>
       <p><strong>{entry.editor_name}</strong> · <time dateTime={entry.edited_at}>{formatTime(entry.edited_at)} IST</time></p>
       {entry.display_changes.length>0?<table className="history-changes" aria-label={`Changes in version ${entry.version}`}><thead><tr><th scope="col">Field</th><th scope="col">Before</th><th scope="col">After</th></tr></thead><tbody>{entry.display_changes.map((change,index)=><tr key={index}><th scope="row">{change.field}</th><td>{change.before}</td><td>{change.after}</td></tr>)}</tbody></table>:<p>{entry.activity_type==='call'?'Call recorded without changing customer fields. See Calls for its outcome and notes.':'No field details were recorded.'}</p>}
     </li>)}</ol>}

@@ -17,5 +17,5 @@ export async function GET(request:Request,{params}:{params:Promise<{id:string}>}
   if(editors.error||statuses.error)return databaseFailure(editors.error??statuses.error!);
   const names=new Map<string,string>(editors.data.map((e:{editor_id:string;display_name:string})=>[e.editor_id,e.display_name]));
   const statusNames=new Map<string,string>(statuses.data.map(s=>[s.id,s.label]));
-  return reply({history:result.data.map(h=>({...h,editor_name:h.editor_id===null?'Public source ingestion':names.get(h.editor_id)?.trim()||'Unavailable staff member',display_changes:displayChanges(h.changes,statusNames)})),total:result.count,page});
+  return reply({history:result.data.map(h=>({...h,editor_name:h.activity_type==='imported'?'Historical import (legacy caller not inferred)':h.editor_id===null?'Public source ingestion':names.get(h.editor_id)?.trim()||'Unavailable staff member',display_changes:displayChanges(h.changes,statusNames)})),total:result.count,page});
 }

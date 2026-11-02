@@ -11,7 +11,7 @@ export async function POST(request:Request){let form=new URL(request.url).search
  if(input.website!==undefined&&input.website!==''||!validChallenge(input.challenge,form))return respond(400,'BOT_CHECK','Refresh the form verification and wait one second before submitting.');
  let data;try{data=normalizeInquiry(input);if(input.form_version!==undefined&&input.form_version!==config.form_version)throw Error('Form version does not match the registered source.');}catch(e){return respond(400,'VALIDATION',e instanceof Error?e.message:'Invalid inquiry.');}
  const r=await ingestionDb().rpc('ingest_public_lead',{p_form:form,p_submission:data.submission_id,p_origin:origin,p_original:data.original,p_lead:data.lead,p_metadata:data.metadata});
- if(r.error)return respond(r.error.code==='PT409'?409:r.error.code==='42501'?403:503,r.error.code==='PT409'?'IDEMPOTENCY_CONFLICT':'NOT_COMMITTED',r.error.code==='PT409'?'Submission ID was already used with different content.':'Inquiry was not confirmed. Retry the same submission safely.');
+ if(r.error)return respond(r.error.code==='PT409'?409:r.error.code==='42501'?403:503,r.error.code==='PT409'?'IDEMPOTENCY_CONFLICT':'NOT_COMMITTED',r.error.code==='PT409'?'Submission or reliable external identity conflicts with existing/imported content. Existing CRM data is preserved.':'Inquiry was not confirmed. Retry the same submission safely.');
  return Response.json({ok:true,...r.data},{status:r.data.replayed?200:201,headers:cors(origin,allowed)});
  }catch{return respond(503,'UNAVAILABLE','Submission service unavailable. Keep the same submission ID and retry later.');}
 }

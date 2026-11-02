@@ -18,3 +18,10 @@ build/
 *.pfx
 credentials*.json
 service-account*.json
+
+# Private historical import artifacts; fixtures are generated in memory.
+*.csv
+*.xlsx
+*.xls
+*.xlsm
+imports-private/

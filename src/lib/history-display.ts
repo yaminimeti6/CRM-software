@@ -1,5 +1,5 @@
 export type HistoryChange={field:string;before:string;after:string};
-export type HistoryEntry={id:string;edited_at:string;version:number;editor_name:string;activity_type?:'created'|'edit'|'call'|null;display_changes:HistoryChange[]};
+export type HistoryEntry={id:string;edited_at:string;version:number;editor_name:string;activity_type?:'created'|'edit'|'call'|'imported'|null;display_changes:HistoryChange[]};
 const labels:Record<string,string>={name:'Name',mobile_no:'Mobile',address:'Address',notes:'Notes',status_id:'Status'};
 function object(value:unknown):Record<string,unknown>{return value!==null&&typeof value==='object'&&!Array.isArray(value)?value as Record<string,unknown>:{};}
 function text(value:unknown):string{
