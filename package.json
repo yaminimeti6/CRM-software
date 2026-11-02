@@ -14,7 +14,8 @@
     "verify:team": "node scripts/verify-manual-team.mjs",
     "configure:team": "node scripts/configure-team.mjs",
     "verify:calls": "node scripts/verify-calls.mjs",
-    "verify:follow-ups": "node scripts/verify-follow-ups.mjs"
+    "verify:follow-ups": "node scripts/verify-follow-ups.mjs",
+    "verify:ingestion": "node scripts/verify-ingestion.mjs"
   },
   "keywords": [],
   "author": "",

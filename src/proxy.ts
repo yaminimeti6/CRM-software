@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { supabaseConfig } from './lib/config';
 
 export async function proxy(request: NextRequest) {
+  if(request.nextUrl.pathname.startsWith('/api/public/'))return NextResponse.next();
   const config = supabaseConfig();
   let response = NextResponse.next({ request });
   response.headers.set('Cache-Control', 'private, no-store');

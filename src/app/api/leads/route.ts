@@ -14,7 +14,8 @@ export async function GET(request:Request) {
     db.from('lead_field_definitions').select('field_key').order('field_key'),
   ]);
   if(leads.error||statuses.error||fields.error)return databaseFailure(leads.error??statuses.error??fields.error!);
-  return reply({leads:leads.data.leads,total:leads.data.total,page,size,statuses:statuses.data,fields:fields.data.map(f=>f.field_key)});
+  const metadata=await db.from('lead_ingestion').select('lead_id,is_repeat,otp_trusted').in('lead_id',leads.data.leads.map((l:{id:string})=>l.id));if(metadata.error)return databaseFailure(metadata.error);
+  return reply({leads:leads.data.leads.map((l:{id:string})=>({...l,is_repeat:metadata.data.find(m=>m.lead_id===l.id)?.is_repeat??false,public_inquiry:metadata.data.some(m=>m.lead_id===l.id)})),total:leads.data.total,page,size,statuses:statuses.data,fields:fields.data.map(f=>f.field_key)});
 }
 export async function POST(request:Request) {
   const access=await requireLeadStaff();if(access.error)return access.error;

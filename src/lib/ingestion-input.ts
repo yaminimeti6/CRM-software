@@ -1,0 +1,18 @@
+﻿import {isUuid,validateLeadInput} from './lead-input.ts';
+export const protectedField=(key:string)=>/^(sourceid|brand(id|reference)?|product(id|reference)?|organization(id)?|org(id)?|caller(id|name)?|role|status(id)?|callingstatus|created(at|by)|received(at)?|updatedat|version|id|confirmed.*|confirmation.*|firstconfirmed.*|latestconfirmed.*|call(count|attempts?)|attempt(count|s)|otptrusted|otpverified|verified)$/.test(key.replace(/[^a-z0-9]/gi,'').toLowerCase());
+function safeValue(v:unknown,depth=0):boolean{if(depth>2)return false;if(v===null||typeof v==='boolean'||typeof v==='number')return v===null||typeof v!=='number'||Number.isFinite(v);if(typeof v==='string')return v.length<=1000;if(Array.isArray(v))return v.length<=20&&v.every(x=>safeValue(x,depth+1));return !!v&&typeof v==='object'&&Object.keys(v).length<=20&&Object.entries(v).every(([k,x])=>k.trim().length>0&&k.length<=80&&!['__proto__','constructor','prototype'].includes(k)&&!protectedField(k)&&safeValue(x,depth+1));}
+export function normalizeInquiry(v:Record<string,unknown>){
+ if(typeof v.form_id!=='string'||!/^[-a-zA-Z0-9_]{8,100}$/.test(v.form_id)||typeof v.submission_id!=='string'||!isUuid(v.submission_id))throw Error('A registered form_id and stable UUID submission_id are required.');
+ if(Object.keys(v).length>55||Object.keys(v).some(k=>protectedField(k)))throw Error('Protected fields cannot be submitted.');
+ for(const k of ['timestamp','lead_id','form_version','otp_status'])if(v[k]!==undefined&&(typeof v[k]!=='string'||String(v[k]).length>200))throw Error('Invalid legacy metadata.');
+ const original={...v};delete original.challenge;delete original.website;const explicit=v.answers??{};
+ if(!explicit||typeof explicit!=='object'||Array.isArray(explicit))throw Error('answers must be an object.');
+ const answers:Record<string,unknown>=Object.create(null);for(const [k,value]of Object.entries(v))if(!['form_id','submission_id','form_version','challenge','website','name','mobile_no','address','timestamp','lead_id','otp_status','answers'].includes(k))answers[k]=value;
+ for(const [k,value]of Object.entries(explicit)){if(k in answers&&JSON.stringify(answers[k])!==JSON.stringify(value))throw Error('Conflicting flat and nested answer fields.');answers[k]=value;}
+ if(Object.keys(answers).length>30||!safeValue(answers))throw Error('Use at most 30 answer fields, 80-character field names, 1000-character values and nesting depth 2.');
+ const display=Object.fromEntries(Object.entries(answers).map(([k,value])=>[k,(/^(otp|otp_status)$/i.test(k)?'Untrusted source: ':'')+(typeof value==='string'?value:JSON.stringify(value))]));
+ const valid=validateLeadInput({name:v.name,mobile_no:v.mobile_no,address:v.address??'',answers:display});if(!valid.data)throw Error(valid.error);
+ const raw=Object.fromEntries(Object.entries(answers).filter(([k])=>['campId','place','AdCrevId','AdCrevName','FbClickId','utm_source','utm_medium','utm_campaign','utm_content','utm_term'].includes(k)));
+ const normalized=Object.fromEntries([['campId','campaign_reference'],['place','placement_reference'],['AdCrevId','source_creative_reference'],['AdCrevName','source_creative_name'],['FbClickId','facebook_click_reference']].filter(([k])=>k in raw).map(([k,target])=>[target,raw[k]]));
+ const {notes:_notes,...lead}=valid.data;return{form_id:v.form_id,submission_id:v.submission_id,original,lead,metadata:{original_answers:answers,raw_advertising:raw,normalized_attribution:normalized,legacy_otp_label:v.otp_status??answers.otp_status??answers.OTP??null,external_lead_id:v.lead_id??'',source_timestamp:v.timestamp??''}};
+}
