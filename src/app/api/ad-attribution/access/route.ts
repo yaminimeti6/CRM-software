@@ -1,0 +1,1 @@
+import {requireAdReport} from '@/lib/ad-attribution-api';import {reply} from '@/lib/lead-api';export const dynamic='force-dynamic';export async function GET(){const a=await requireAdReport();return a.error??reply({role:a.role});}

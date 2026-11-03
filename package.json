@@ -21,7 +21,8 @@
     "cleanup:imports": "node scripts/cleanup-imports.mjs",
     "verify:catalog": "node scripts/verify-catalog.mjs",
     "verify:lead-views": "node scripts/verify-lead-views.mjs",
-    "verify:performance": "node scripts/verify-performance.mjs"
+    "verify:performance": "node scripts/verify-performance.mjs",
+    "verify:attribution": "node --experimental-strip-types scripts/verify-attribution.mjs"
   },
   "keywords": [],
   "author": "",
