@@ -48,7 +48,9 @@
     ".next-ingestion-check/types/**/*.ts",
     ".next-ingestion-check/dev/types/**/*.ts",
     ".next-imports-check/types/**/*.ts",
-    ".next-imports-check/dev/types/**/*.ts"
+    ".next-imports-check/dev/types/**/*.ts",
+    ".next-catalog-check/types/**/*.ts",
+    ".next-catalog-check/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

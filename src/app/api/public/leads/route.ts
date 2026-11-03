@@ -9,9 +9,9 @@ export async function POST(request:Request){let form=new URL(request.url).search
  const config=await source(form);allowed=!!origin&&!!config?.allowed_origins.includes(origin);if(!config?.enabled||!allowed)return respond(403,'SOURCE_UNAVAILABLE','Source disabled, unavailable or origin not permitted.');
  if(!await limited(request,form))return respond(429,'RATE_LIMIT','Too many requests. Wait before retrying the same submission.');
  if(input.website!==undefined&&input.website!==''||!validChallenge(input.challenge,form))return respond(400,'BOT_CHECK','Refresh the form verification and wait one second before submitting.');
- let data;try{data=normalizeInquiry(input);if(input.form_version!==undefined&&input.form_version!==config.form_version)throw Error('Form version does not match the registered source.');}catch(e){return respond(400,'VALIDATION',e instanceof Error?e.message:'Invalid inquiry.');}
+ let data;try{data=normalizeInquiry(input);}catch(e){return respond(400,'VALIDATION',e instanceof Error?e.message:'Invalid inquiry.');}
  const r=await ingestionDb().rpc('ingest_public_lead',{p_form:form,p_submission:data.submission_id,p_origin:origin,p_original:data.original,p_lead:data.lead,p_metadata:data.metadata});
- if(r.error)return respond(r.error.code==='PT409'?409:r.error.code==='42501'?403:503,r.error.code==='PT409'?'IDEMPOTENCY_CONFLICT':'NOT_COMMITTED',r.error.code==='PT409'?'Submission or reliable external identity conflicts with existing/imported content. Existing CRM data is preserved.':'Inquiry was not confirmed. Retry the same submission safely.');
+ if(r.error)return respond(r.error.code==='PT409'?409:r.error.code==='42501'?403:503,r.error.code==='PT409'?'IDEMPOTENCY_CONFLICT':'NOT_COMMITTED',r.error.code==='PT409'?'Submission conflicts or the configured form version changed. Reload for a new inquiry; retry accepted inquiries with their original ID/content. Existing CRM data is preserved.':r.error.code==='42501'?'Source, form version or catalog is unavailable/retired/archived. Contact the form administrator.':'Inquiry was not confirmed. Retry the same submission safely.');
  return Response.json({ok:true,...r.data},{status:r.data.replayed?200:201,headers:cors(origin,allowed)});
  }catch{return respond(503,'UNAVAILABLE','Submission service unavailable. Keep the same submission ID and retry later.');}
 }

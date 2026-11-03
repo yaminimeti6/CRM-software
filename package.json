@@ -18,7 +18,8 @@
     "verify:ingestion": "node scripts/verify-ingestion.mjs",
     "verify:dynamic-fields": "node scripts/verify-dynamic-fields.mjs",
     "verify:imports": "node --experimental-strip-types scripts/verify-imports.mjs",
-    "cleanup:imports": "node scripts/cleanup-imports.mjs"
+    "cleanup:imports": "node scripts/cleanup-imports.mjs",
+    "verify:catalog": "node scripts/verify-catalog.mjs"
   },
   "keywords": [],
   "author": "",
