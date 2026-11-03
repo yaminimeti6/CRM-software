@@ -8,3 +8,8 @@ supabase/migrations/202611030025_attribution_readonly_admin.sql text eol=lf
 supabase/migrations/202611030026_attribution_optional_aliases.sql text eol=lf
 # Preserve exact bytes of the Step 11 Campaign extension migration.
 supabase/migrations/202611030027_campaign_attribution.sql text eol=lf
+
+supabase/migrations/202611030028_meta_connection.sql text eol=lf
+supabase/migrations/202611030029_meta_jobs.sql text eol=lf
+supabase/migrations/202611030030_meta_spend_reports.sql text eol=lf
+supabase/migrations/202611030031_meta_retained_status.sql text eol=lf

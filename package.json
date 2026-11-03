@@ -23,7 +23,9 @@
     "verify:lead-views": "node scripts/verify-lead-views.mjs",
     "verify:performance": "node scripts/verify-performance.mjs",
     "verify:attribution": "node --experimental-strip-types scripts/verify-attribution.mjs",
-    "verify:campaigns": "node --experimental-strip-types scripts/verify-campaigns.mjs"
+    "verify:campaigns": "node --experimental-strip-types scripts/verify-campaigns.mjs",
+    "worker:meta": "node --experimental-strip-types scripts/meta-worker.ts",
+    "verify:meta": "node --experimental-strip-types scripts/verify-meta.mjs"
   },
   "keywords": [],
   "author": "",

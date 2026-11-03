@@ -62,7 +62,9 @@
     ".next-attribution-check/types/**/*.ts",
     ".next-attribution-check/dev/types/**/*.ts",
     ".next-campaign-check/types/**/*.ts",
-    ".next-campaign-check/dev/types/**/*.ts"
+    ".next-campaign-check/dev/types/**/*.ts",
+    ".next-meta-check/types/**/*.ts",
+    ".next-meta-check/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
