@@ -45,3 +45,5 @@ test('one-time bootstrap survives partial failure, commits atomically and cannot
     await assert.rejects(db.query('select * from crm_private.bootstrap_state'), /permission denied/);
   } finally { await engine.close(); }
 });
+
+

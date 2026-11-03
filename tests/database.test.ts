@@ -21,7 +21,7 @@ test('actual PostgreSQL migration enforces tenant isolation and denies client pr
       await db.exec(`insert into auth.users values ('${ids[i]}',now());
         insert into public.staff_profiles(id,full_name) values ('${ids[i]}','Staff ${i}');
         insert into public.organization_memberships(user_id,organization_id,role)
-        values ('${ids[i]}','${ids[i === 3 ? 5 : 4]}','${['admin','manager','telecaller','creative_analyst'][i]}');`);
+        values ('${ids[i]}','${ids[i === 3 ? 5 : 4]}','${['admin', 'manager', 'telecaller', 'creative_analyst'][i]}');`);
     }
     for (const id of ids.slice(0, 4)) {
       await db.exec(`set role authenticated; select set_config('request.jwt.claim.sub','${id}',false);`);
@@ -41,7 +41,7 @@ test('actual PostgreSQL migration enforces tenant isolation and denies client pr
     }
     await db.exec(`update public.organization_memberships set active=false where user_id='${ids[2]}';
       set role authenticated; select set_config('request.jwt.claim.sub','${ids[2]}',false);`);
-    for (const table of ['organizations','staff_profiles','organization_memberships']) assert.equal((await db.query(`select * from public.${table}`)).rows.length, 0);
+    for (const table of ['organizations', 'staff_profiles', 'organization_memberships']) assert.equal((await db.query(`select * from public.${table}`)).rows.length, 0);
     await db.exec(`reset role; set role anon;`);
     await assert.rejects(db.query('select * from public.staff_profiles'), /permission denied/);
   } finally { await db.close(); }

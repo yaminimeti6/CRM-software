@@ -25,3 +25,7 @@ export function databaseFailure(error:{code?:string}) {
   if(['22023','22P02','23514','23503'].includes(error.code??'')) return reply({error:'Invalid lead details or status. Review your input.'},400);
   return reply({error:'Database request failed. Please retry; contact the administrator if it continues.'},503);
 }
+
+
+
+
