@@ -1,0 +1,3 @@
+# Preserve exact bytes of this applied, checksum-ledger migration on checkout.
+# Do not normalize older applied migrations as part of Step 10.
+supabase/migrations/202611030023_management_performance.sql -text whitespace=cr-at-eol

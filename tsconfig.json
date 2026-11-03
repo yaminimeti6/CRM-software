@@ -56,7 +56,9 @@
     ".next-review-check/types/**/*.ts",
     ".next-review-check/dev/types/**/*.ts",
     ".next-acceptance-check/types/**/*.ts",
-    ".next-acceptance-check/dev/types/**/*.ts"
+    ".next-acceptance-check/dev/types/**/*.ts",
+    ".next-performance-check/types/**/*.ts",
+    ".next-performance-check/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
