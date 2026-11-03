@@ -55,3 +55,7 @@ Earlier partial runs are not reported as full passes: list reads exposed the sta
 Exact cleanup removed only fixture IDs created by this verifier and their computed ephemeral rate buckets. Full before/after hash-only comparisons matched every pre-existing business, catalog, raw/source/snapshot/audit, private import/batch, staff and Auth/password record. Normal security-rate expiry and invalidation revisions are excluded from business comparisons. Existing users, passwords, manual leads and completed import batches were not changed. Unrelated IDE work remains outside this task's commit. No live Shopify website or Google Sheet was touched.
 
 No production deployment, warehouse-scale performance benchmark or formal differential-privacy guarantee is claimed. Larger pagination was tested locally as described, not as a live production load test. Step 6B remains pending; stop after Step 11.
+
+## Additional Campaign completion
+
+The original Campaign text field was not a full Campaign implementation. The missing organization-scoped Campaign catalog/relationships and Campaign grouping/filtering are now implemented and verified within Step 11. Migration 027 is applied; [step-11-campaigns.md](step-11-campaigns.md) records the UI locations, actual checks and preservation results. This addendum does not retroactively claim the initial Step 11 tests covered Campaign functionality. No Step 12 or GitHub push.

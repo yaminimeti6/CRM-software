@@ -60,7 +60,9 @@
     ".next-performance-check/types/**/*.ts",
     ".next-performance-check/dev/types/**/*.ts",
     ".next-attribution-check/types/**/*.ts",
-    ".next-attribution-check/dev/types/**/*.ts"
+    ".next-attribution-check/dev/types/**/*.ts",
+    ".next-campaign-check/types/**/*.ts",
+    ".next-campaign-check/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

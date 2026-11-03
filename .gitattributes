@@ -6,3 +6,5 @@ supabase/migrations/202611030024_ad_attribution.sql text eol=lf
 # Step 11 read-only RPC and optional-alias corrections also retain canonical checksum bytes.
 supabase/migrations/202611030025_attribution_readonly_admin.sql text eol=lf
 supabase/migrations/202611030026_attribution_optional_aliases.sql text eol=lf
+# Preserve exact bytes of the Step 11 Campaign extension migration.
+supabase/migrations/202611030027_campaign_attribution.sql text eol=lf
