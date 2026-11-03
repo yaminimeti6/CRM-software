@@ -19,7 +19,8 @@
     "verify:dynamic-fields": "node scripts/verify-dynamic-fields.mjs",
     "verify:imports": "node --experimental-strip-types scripts/verify-imports.mjs",
     "cleanup:imports": "node scripts/cleanup-imports.mjs",
-    "verify:catalog": "node scripts/verify-catalog.mjs"
+    "verify:catalog": "node scripts/verify-catalog.mjs",
+    "verify:lead-views": "node scripts/verify-lead-views.mjs"
   },
   "keywords": [],
   "author": "",

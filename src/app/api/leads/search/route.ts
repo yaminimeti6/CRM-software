@@ -1,0 +1,2 @@
+﻿import {requireLeadStaff,readBody,reply,sameOrigin} from '@/lib/lead-api';import {leadPage} from '@/lib/lead-view-api';
+export async function POST(request:Request){const a=await requireLeadStaff();if(a.error)return a.error;if(!sameOrigin(request))return reply({error:'Same-origin required.'},403);try{const b=await readBody(request) as {definition:unknown;page:number};return await leadPage(b.definition,b.page);}catch{return reply({error:'Invalid search request.'},400);}}
