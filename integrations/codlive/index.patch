@@ -1,0 +1,12 @@
+diff --git a/CodLive/index.html b/CodLive/index.html
+index 6051218..b5b7e68 100644
+--- a/CodLive/index.html
++++ b/CodLive/index.html
+@@ -1389 +1389,3 @@
+-  <script>
++  <script src="crm-adapter.js"></script>
++<script>const submitCodLiveOrder = createCodLiveCRM({base: 'https://CRM-ENDPOINT.invalid', formId: 'codlive_test_v1'});</script>
++<script>
+@@ -1719 +1721 @@
+-      submitOrderToSheet(payload)
++      submitCodLiveOrder(payload, submitOrderToSheet)
