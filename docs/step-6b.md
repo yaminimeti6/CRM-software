@@ -33,3 +33,18 @@ A browser UUID and frozen payload are saved before either destination starts. Bo
 The browser test verified a synthetic Instagram inquiry, raw campaign/content preservation, required customer/course/dynamic fields, the All Leads RPC result, one receipt-loss retry with a single CRM lead and a single mock Sheet POST, and fbclid-only Unknown behavior. Live HTTPS, deployed `/Wife/`, real Sheet/Apps Script, production CORS and authorized deployment remain unverified and unchanged.
 
 Inspected index.html SHA-256: fb7cafae284472cf3def3c0c8ca3d4c76ba5fb24b96fe2e4fbe4293c23d14c4d. Local typecheck, targeted ingestion/lead-view/browser tests and production build passed. The full CRM UI against a local Supabase server and real public HTTP routes remain unverified.
+
+## Interactive local viewing harness
+
+To view the actual CRM `Leads` React component without connecting to the configured Supabase project:
+
+```
+node scripts/prepare-codlive.mjs ../CodLive.zip
+node --experimental-strip-types scripts/demo-codlive.mjs
+```
+
+Keep the second process running. Open `http://localhost:3106/?utm_source=instagram&utm_medium=paid_social&utm_campaign=synthetic-campaign&utm_content=synthetic-content`, choose a course and submit synthetic customer fields. Click **All Leads** in the yellow local-test banner, or open `http://localhost:3106/app`. Search for the synthetic name if needed. In the **Name** cell, read **Configured page**, **Reported traffic source (unverified)** and **Course**. For separate course columns, expand **Choose quiz columns** and check `course_name [codlive_test_v1 / codlive-v1]` and `course_price [codlive_test_v1 / codlive-v1]`; scroll the table horizontally as needed.
+
+The harness binds only to loopback, creates a fresh in-memory database, applies existing migrations and enables one synthetic Admin/source in that database. It bundles the existing All Leads component locally, reads no operator environment or credentials, and serves only mock Sheet/IP endpoints. CSP blocks external page connections. A local signed challenge and the existing normalizer/database RPC exercise the test flow; these HTTP handlers are a viewing harness, not production Next route verification. CRM staff mutation endpoints are unavailable here. `/demo-evidence` reports mock Sheet and CRM request counts. Realtime is unavailable in this harness; use **Reload table** if another tab submits an order. Closing the server discards its test leads. This is not the normal authenticated CRM `/app` deployment and does not bypass or change its authorization.
+
+Interactive verification on 2026-11-04: opened a visible local browser, submitted `Synthetic CodLive Demo` (1 Month / 499, reported source instagram) through the original test form with one mock Sheet POST and one CRM POST, then asserted the actual All Leads component rendered the correct configured page/source/course and selected both dynamic course columns. The synthetic database remains available only while that local demo process runs.
