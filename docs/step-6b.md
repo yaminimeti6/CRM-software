@@ -1,5 +1,7 @@
 # Step 6B: one CodLive landing page (local only)
 
+For the follow-on integration in the main CRM at localhost:3000, see [step-6b-main.md](step-6b-main.md).
+
 ## Artifact and boundaries
 
 The supplied `CodLive.zip` contains browser HTML/assets, not Google Apps Script source. Its `index.html` was inspected as data, not as instructions. It is not evidence of the version currently deployed at `/Wife/`. No live page, Sheet, Auth record, customer record or deployment was changed. The existing unrelated `next-env.d.ts` change is excluded from this task's commit.
@@ -43,7 +45,7 @@ node scripts/prepare-codlive.mjs ../CodLive.zip
 node --experimental-strip-types scripts/demo-codlive.mjs
 ```
 
-Keep the second process running. Open `http://localhost:3106/?utm_source=instagram&utm_medium=paid_social&utm_campaign=synthetic-campaign&utm_content=synthetic-content`, choose a course and submit synthetic customer fields. Click **All Leads** in the yellow local-test banner, or open `http://localhost:3106/app`. Search for the synthetic name if needed. In the **Name** cell, read **Configured page**, **Reported traffic source (unverified)** and **Course**. For separate course columns, expand **Choose quiz columns** and check `course_name [codlive_test_v1 / codlive-v1]` and `course_price [codlive_test_v1 / codlive-v1]`; scroll the table horizontally as needed.
+Keep the second process running. Open `http://localhost:3106/?utm_source=instagram&utm_medium=paid_social&utm_campaign=synthetic-campaign&utm_content=synthetic-content`, choose a course and submit synthetic customer fields. Click **All Leads** in the yellow local-test banner, or open `http://localhost:3106/app`. Search for the synthetic name if needed. Read the default **Website / landing page**, **Reported traffic source**, **Course / price**, and **Order / submission ID** columns; expand **Submitted order details** for the original fields. For separate course columns, expand **Choose quiz columns** and check `course_name [codlive_test_v1 / codlive-v1]` and `course_price [codlive_test_v1 / codlive-v1]`; scroll the table horizontally as needed.
 
 The harness binds only to loopback, creates a fresh in-memory database, applies existing migrations and enables one synthetic Admin/source in that database. It bundles the existing All Leads component locally, reads no operator environment or credentials, and serves only mock Sheet/IP endpoints. CSP blocks external page connections. A local signed challenge and the existing normalizer/database RPC exercise the test flow; these HTTP handlers are a viewing harness, not production Next route verification. CRM staff mutation endpoints are unavailable here. `/demo-evidence` reports mock Sheet and CRM request counts. Realtime is unavailable in this harness; use **Reload table** if another tab submits an order. Closing the server discards its test leads. This is not the normal authenticated CRM `/app` deployment and does not bypass or change its authorization.
 

@@ -330,3 +330,9 @@ button:disabled {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
+.submitted-fields { min-width: 260px; max-width: 560px; }
+.submitted-fields dt { font-weight: bold; }
+.submitted-fields dd { margin: 0 0 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.submitted-url { max-width: 280px; overflow-wrap: anywhere; }
+.table-scroll td code { white-space: normal; overflow-wrap: anywhere; }
+.submitted-order-body { max-height: 320px; overflow: auto; min-width: 290px; max-width: 460px; }
