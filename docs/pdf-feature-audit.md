@@ -80,7 +80,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 14 Save before OTP, later trusted verification update; key rotation | Pending | Requires provider/deployed implementation and authorized rotation |
 | 15 Apps Script forward/synchronize compatibility | Pending | Browser dual delivery prepared instead; no Apps Script deployment inspected |
 | 15 Existing JSON public lead API, validation, UUID/time/source, dynamic/tracking/idempotency/receipt | Tested locally | Actual main challenge/POST/browser and database integration |
-| 15 Form-encoded ingestion | Pending | Current public adapter/API uses JSON |
+| 15 Form-encoded ingestion | Tested locally | Direct main API URL-encoded retry verified; answers supplied as JSON text. See public-lead-api.md |
 | 15 Rate limits/challenge/bot mitigation/size/sanitization/origins/logging | Tested locally | Existing ingestion tests; real HTTPS proxy/CORS still pending |
 | 16 Duplicate request vs intentional repeat inquiry | Tested locally | Stable source-scoped submission UUID; separate repeat-mobile lead indicator |
 | 16 Configurable repeat policy | Pending | Current behavior preserves repeat inquiries; no full policy UI |
@@ -118,4 +118,4 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 30 Daily leads/confirms/caller attempts/leaderboard/pending/page/version/creative/product comparisons and edit history | Tested locally | Existing operational and attribution reports; incomplete live capture prevents live business claims |
 | 30 Which creative merits budget increase | Pending | Requires reliable captured attribution, real spend and advisory review; no automatic action |
 
-Current-task evidence and developer/live acceptance instructions are in [core-workflow-pilot.md](core-workflow-pilot.md). Earlier unchanged feature evidence is in `docs/live-acceptance-through-step-9.md`, Step 10–12 status records and corresponding tests. No broad historic test rerun is implied by this audit.
+Current-task evidence and developer/live acceptance instructions are in [core-workflow-pilot.md](core-workflow-pilot.md). The subsequent direct HTTP API review, reusable Sir demo, actual responses and form-encoded verification are in [public-lead-api.md](public-lead-api.md). Earlier unchanged feature evidence is in `docs/live-acceptance-through-step-9.md`, Step 10–12 status records and corresponding tests. No broad historic test rerun is implied by this audit.
