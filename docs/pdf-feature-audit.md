@@ -2,6 +2,8 @@
 
 Source: supplied `Crm.Pdf`, version 1.0, 26 pages, sections 1–30, read in full for this review. The numbered development roadmap is paused. This audit does not authorize implementation of pending features.
 
+Read-only live review update: current /Wife/ HTML is an advertorial leading to a separate storefront, not the supplied ZIP form. The actual order/Sheet collector is unverified and live integration remains pending. See [developer handoff and exact blockers](live-wife-developer-handoff.md). No public page, checkout, hosting or deployment was changed.
+
 Status meanings: **Tested locally** = repository implementation with automated/local-browser evidence, sometimes using the existing managed Supabase backend; this is not public production acceptance. **Pending** = absent, partial, not verified, or requires real provider/deployment access. **Working live** requires observed behavior on the authorized public CRM/page/provider; no item is assigned that status because no public CRM deployment exists. Earlier documents' term “live” often means localhost with real development Supabase; that evidence is classified here as tested locally. Prior checks are identified separately from checks rerun in this task.
 
 ## Feature-by-feature inventory

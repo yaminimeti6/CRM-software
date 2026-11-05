@@ -1,0 +1,14 @@
+diff --git a/CodLive/index.html b/CodLive/index.html
+index 6051218..d5c421e 100644
+--- a/CodLive/index.html
++++ b/CodLive/index.html
+@@ -1389,2 +1389,4 @@
+-  <script>
++  <script src="crm-adapter.js"></script>
++<script src="wife-pilot-config.js"></script>
++<script>
+     const orderForm = document.getElementById("orderForm");
+@@ -1719,2 +1721,2 @@
+-      submitOrderToSheet(payload)
++      submitCodLivePilotOrder(payload, submitOrderToSheet)
+         .then(() => {

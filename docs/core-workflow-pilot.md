@@ -1,5 +1,7 @@
 # Main CRM workflow and /Wife/ pilot
 
+**Live observation update (2026-11-05):** the public /Wife/ page currently returns an advertorial linking to a separate product storefront, not the ZIP order form. The actual collector/Sheet contract must be obtained before any live integration patch can be finalized. See [live-wife-developer-handoff.md](live-wife-developer-handoff.md), which supersedes the earlier assumption that dailyhealthfocus.info itself submits the order and determines the required actual submitting origin. No deployment is authorized.
+
 Numbered roadmap paused by the operator on 2026-11-05. This task repairs the existing main CRM workflow only. Admin and Invite Staff are unchanged. Accounts, passwords, previous leads, history and bootstrap protection are preserved. No deployment or Git push is performed.
 
 ## Current result
