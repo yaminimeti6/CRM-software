@@ -24,8 +24,8 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 4 Team management | Tested locally | Existing invitation/role evidence; Admin and Invite Staff unchanged |
 | 4 Unified Settings (statuses, mappings, imports, integrations) | Pending | Imports/mappings/integrations exist in separate modules; full status settings UI absent |
 | 5 Large editable table, scrolling and sticky headers | Tested locally | Main table and stylesheet; existing browser evidence |
-| 5 Freeze Timestamp, Name and Mobile | Pending | Full three-column freezing not established |
-| 5 Inline customer details and dropdown status | Tested locally | Existing row editors and concurrency checks |
+| 5 Freeze Timestamp, Name and Mobile | Pending | Name/Mobile freezing now browser-tested locally; timestamp is visible but not frozen in this requested slice |
+| 5 Inline customer details and dropdown status | Tested locally | Explicit Edit row opens existing versioned editors; compact default read mode and stale-edit preservation verified |
 | 5 Automatic saving | Pending | Explicit Save row is current behavior |
 | 5 Real-time updates across users | Tested locally | Prior Step 9 Realtime two-session evidence; fallback authoritative reload |
 | 5 Search name/mobile | Tested locally | Server search; current main synthetic search |
@@ -35,7 +35,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 5 Hide/show columns | Tested locally | Dynamic quiz column selection only; fixed default columns remain |
 | 5 Saved custom views | Tested locally | Private filter/sort/quiz-column/page-size views; no arbitrary column layout |
 | 5 Permission-controlled CSV/Excel export | Pending | Historical import is not export |
-| 5 Lead detail panel / history / activity timeline | Tested locally | Inline submitted details, history, call/follow-up panels; no separate universal detail panel |
+| 5 Lead detail panel / history / activity timeline | Tested locally | Right-side Order/Source/Answers/Calls/Follow-ups/History drawer reuses existing APIs; main browser checks passed. See all-leads-ui.md |
 | 5 Saving/success/error indicators | Tested locally | Existing row and request state messages |
 | 6 Standard timestamp/name/mobile, optional dynamic fields | Tested locally | Server timestamp and validation, JSONB answers; original values preserved |
 | 6 Unknown field registration and source association | Tested locally | Dynamic-field and ingestion tests, prior main-backend evidence |

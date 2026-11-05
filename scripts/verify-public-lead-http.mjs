@@ -69,11 +69,11 @@ try{
   browser=await chromium.launch({executablePath:['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe','C:/Program Files/Google/Chrome/Application/chrome.exe'].find(existsSync),headless:true});
   const page=await browser.newPage({viewport:{width:4000,height:1000}});await page.goto(base+'/login');await page.getByLabel('Username or email',{exact:true}).fill(email);await page.getByLabel('Password',{exact:true}).fill(password);await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.waitForURL('**/app');
   const rowUrl=base+'/app?q='+encodeURIComponent(inquiry.name);await page.goto(rowUrl);const row=page.locator('tr[data-lead-id="'+lead.id+'"]');await row.waitFor();
-  const text=await row.innerText();for(const expected of [sourceName,'dailyhealthfocus.info','instagram','1 Month','499',inquiry.lead_id,inquiry.submission_id])assert(text.includes(expected),expected);
+  const text=await row.innerText();for(const expected of [sourceName,'dailyhealthfocus.info','instagram','1 Month','499'])assert(text.includes(expected),expected);
   mkdirSync('.cache/public-lead-http',{recursive:true});await row.screenshot({path:'.cache/public-lead-http/all-leads-row.png'});
-  await row.getByText('Submitted order details',{exact:true}).click();assert((await row.innerText()).includes(inquiry.answers.Sir_Demo_Question_20261105));assert((await row.innerText()).includes('"quantity":2'));
+  await row.getByRole('button',{name:'Open lead '+inquiry.name,exact:true}).click();const drawer=page.getByRole('dialog',{name:inquiry.name,exact:true});assert((await drawer.innerText()).includes(inquiry.lead_id));assert((await drawer.innerText()).includes(inquiry.submission_id));await drawer.getByRole('tab',{name:'Answers',exact:true}).click();assert((await drawer.innerText()).includes(inquiry.answers.Sir_Demo_Question_20261105));assert((await drawer.innerText()).includes('"quantity":2'));await drawer.getByRole('button',{name:'Close lead details',exact:true}).click();
   await page.getByText('Choose quiz columns',{exact:false}).click();await page.getByLabel(`Sir_Demo_Question_20261105 [${inquiry.form_id} / ${inquiry.form_version}]`,{exact:true}).check();
-  assert.equal(await row.getByLabel(`Sir_Demo_Question_20261105 [${inquiry.form_id} / ${inquiry.form_version}] for ${inquiry.name}`,{exact:true}).inputValue(),inquiry.answers.Sir_Demo_Question_20261105);
+  assert((await row.innerText()).includes(inquiry.answers.Sir_Demo_Question_20261105));
   await row.screenshot({path:'.cache/public-lead-http/all-leads-details.png'});
   stage='cleanup and preservation';await browser.close();browser=null;assert.ifError((await admin.auth.admin.deleteUser(viewerId)).error);viewerId=null;
   await db.query('update public.ingestion_sources set enabled=false,revision=revision+1 where id=$1',[sourceId]);enabledByTest=false;
