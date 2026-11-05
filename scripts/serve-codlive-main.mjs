@@ -23,12 +23,13 @@ assert.equal(zipHash,'fb7cafae284472cf3def3c0c8ca3d4c76ba5fb24b96fe2e4fbe4293c23
 assert.equal(original.split('      submitOrderToSheet(payload)').length,2);
 let html=original.replace('      submitOrderToSheet(payload)','      submitCodLiveOrder(payload, submitOrderToSheet)');
 html=html.replace(/const scriptURL = "[^"]+";/,'const scriptURL = "/mock-sheet";').replace('https://api.ipify.org?format=json','/mock-ip');
-const setup=`<script src="/local-observer.js"></script><script src="/crm-adapter.js"></script><script>const submitCodLiveOrder=createCodLiveCRM({base:'${crm}',formId:'${formId}',version:'${version}'});</script>`;
+const setup=`<script src="/local-observer.js" data-crm-base="${crm}" data-form-id="${formId}"></script><script src="/crm-adapter.js"></script><script>const submitCodLiveOrder=createCodLiveCRM({base:'${crm}',formId:'${formId}',version:'${version}'});</script>`;
 html=html.replace(/(<script>\s*const orderForm)/,setup+'$1');
 assert(html.includes(setup));assert(!html.includes('https://script.google.com/macros/'));assert(!html.includes('https://api.ipify.org'));
 html=html.replace('<body>','<body><aside style="padding:14px;background:#fff3cd;color:#222">Local form → main CRM localhost:3000. Sheet is a local mock. Only your own submitted orders are saved. <a href="http://localhost:3000/app" target="_blank" rel="noreferrer">Open main All Leads</a></aside>');
 
-const observer=`(()=>{const native=window.fetch.bind(window);window.fetch=async(input,options)=>{const url=new URL(String(input),location.href);let init=options;if(url.pathname==='/mock-sheet'&&url.origin===location.origin){const pending=JSON.parse(sessionStorage.getItem('crm-codlive:${formId}')||'null');init={...options,headers:{...options?.headers,'X-Local-Submission-ID':pending?.inquiry?.submission_id||''}};}const response=await native(input,init);if(url.origin==='${crm}'&&url.pathname==='/api/public/leads'&&response.ok){const receipt=await response.clone().json();if(receipt.accepted){const inquiry=JSON.parse(init.body);delete inquiry.challenge;delete inquiry.website;sessionStorage.setItem('codlive-local-last-id',inquiry.submission_id);try{await native('/local-receipt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({inquiry,receipt})});}catch{}}}return response;};})();`;
+const observer=readFileSync('integrations/codlive/local-observer.js','utf8');
+const diagnostics=[];
 const thanks=`<!doctype html><meta charset="utf-8"><title>Local order verification</title><h1>Your order: main CRM and mock Sheet</h1><p id="message">Checking your submission…</p><a id="crm" href="${crm}/app" target="_blank" rel="noreferrer">Open this order in main All Leads</a><p><a href="/Wife/">Return to original order form</a></p><pre id="result" style="white-space:pre-wrap"></pre><script>const id=sessionStorage.getItem('codlive-local-last-id');if(!id){document.getElementById('message').textContent='No order submitted in this tab.';}else{fetch('/verification?submission_id='+encodeURIComponent(id)).then(async r=>{const d=await r.json();document.getElementById('message').textContent=d.verified?'Verified: main CRM saved once, matching mock Sheet row, same-ID retry created no duplicate.':'Verification pending or incomplete; keep this tab and reconcile before a new inquiry.';document.getElementById('result').textContent=JSON.stringify(d,null,2);if(d.crm_row_url)document.getElementById('crm').href=d.crm_row_url;}).catch(()=>document.getElementById('message').textContent='Verification unavailable. Keep this tab and retry checking later.');}</script>`;
 let db,owner,sourceId,server;
 const jobs=new Map();
@@ -72,6 +73,10 @@ try{
   if(req.method==='POST'){
    if(req.headers.origin!==local)return send(res,{error:'Local origin required'},403);
    const chunks=[];let length=0;for await(const chunk of req){length+=chunk.length;if(length>64000)return send(res,{error:'Body too large'},413);chunks.push(chunk);}const raw=Buffer.concat(chunks);
+   if(url.pathname==='/local-diagnostics'){
+    const d=JSON.parse(raw.toString('utf8'));if(!['validation_blocked','submit_started','javascript_error','network_error','http_error','observer_error'].includes(d.stage))return send(res,{error:'Invalid stage'},400);
+    diagnostics.push({stage:d.stage,at:new Date().toISOString(),...(Number.isInteger(d.status)?{status:d.status}:{}),...(Array.isArray(d.invalid_fields)?{invalid_fields:d.invalid_fields.filter(k=>['fullName','phone','address','landmark','state','pincode','city','course'].includes(k))}:{})});if(diagnostics.length>20)diagnostics.shift();return send(res,{recorded:true});
+   }
    if(url.pathname==='/mock-sheet'){
     const id=req.headers['x-local-submission-id'];if(!uuid(id))return send(res,{error:'Submission ID required'},400);
     const form=await new Request(local,{method:'POST',headers:{'Content-Type':req.headers['content-type']??''},body:raw}).formData();
@@ -88,7 +93,7 @@ try{
    const id=url.searchParams.get('submission_id');if(!uuid(id))return send(res,{error:'Submission UUID required'},400);
    return send(res,state.verified[id]??await verify(id));
   }
-  if(url.pathname==='/local-status')return send(res,{ready:true,main_crm:crm,form_url:local+'/Wife/',form_id:formId,source_name:sourceName,zip_sha256:zipHash,sheet_mode:'local mock only',observed_crm_receipts:Object.keys(state.receipts).length,mock_sheet_rows:state.sheet.length,verified_submissions:Object.keys(state.verified).length});
+  if(url.pathname==='/local-status')return send(res,{ready:true,main_crm:crm,form_url:local+'/Wife/',form_id:formId,source_name:sourceName,zip_sha256:zipHash,sheet_mode:'local mock only',observed_crm_receipts:Object.keys(state.receipts).length,mock_sheet_rows:state.sheet.length,verified_submissions:Object.keys(state.verified).length,diagnostics});
   if(url.pathname==='/mock-ip')return send(res,{ip:''});
   if(url.pathname==='/local-observer.js')return send(res,observer,200,'text/javascript');
   if(url.pathname==='/crm-adapter.js')return send(res,readFileSync('integrations/codlive/crm-adapter.js','utf8'),200,'text/javascript');
