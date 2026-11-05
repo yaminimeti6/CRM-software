@@ -19,10 +19,15 @@
             AdCrevId: q.get('utm_campaign') || '', AdCrevName: q.get('utm_content') || '',
             FbClickId: q.get('fbclid') || '', utm_term: q.get('utm_term') || ''
           };
+          for (const field of ['campaign_id', 'campaign_name', 'adset_id', 'ad_set_id', 'ad_id', 'ad_name', 'creative_id', 'creative_name', 'ad_account_id']) {
+            if (q.has(field)) answers[field] = q.get(field);
+          }
+          if (payload.order_id !== undefined) answers.order_id = String(payload.order_id);
           pending = { payload, sheetDone: false, crmDone: false, inquiry: {
             form_id: formId, form_version: version, submission_id: crypto.randomUUID(),
             name: payload.name, mobile_no: payload.phone, address: payload.address, answers
           }};
+          if (payload.lead_id !== undefined) pending.inquiry.lead_id = String(payload.lead_id);
           storage.setItem(key, JSON.stringify(pending));
         }
         // Freeze both destinations to the original inquiry while either is uncertain.
