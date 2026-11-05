@@ -21,7 +21,7 @@ try{
  const cookies=[];auth=createServerClient(projectUrl,config.local.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,{cookies:{getAll:()=>[],setAll:values=>{cookies.splice(0,cookies.length,...values);}}});
  const signed=await auth.auth.verifyOtp({token_hash:generated.data.properties.hashed_token,type:'magiclink'});assert.ifError(signed.error);assert.equal(signed.data.user.id,owner.user_id);
  browser=await chromium.launch({executablePath:['C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe','C:/Program Files/Google/Chrome/Application/chrome.exe'].find(existsSync),headless:!process.argv.includes('--visible')});
- const context=await browser.newContext({viewport:{width:1600,height:1050}});await context.addCookies(cookies.map(cookie=>({name:cookie.name,value:cookie.value,domain:'localhost',path:'/',sameSite:'Lax',httpOnly:false,secure:false})));
+ const context=await browser.newContext({viewport:{width:1600,height:780}});await context.addCookies(cookies.map(cookie=>({name:cookie.name,value:cookie.value,domain:'localhost',path:'/',sameSite:'Lax',httpOnly:false,secure:false})));
  const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('dialog',dialog=>dialog.dismiss());
  let callRequests=[],callbackRequests=[],patches=[],releaseCall;
  await page.route('**/*',async route=>{
@@ -36,10 +36,10 @@ try{
   return route.continue();
  });
  stage='compact table and frozen columns';
- await page.goto(base+'/app?q='+encodeURIComponent(lead.name));const row=page.locator('tr[data-lead-id="'+lead.id+'"]');await row.waitFor();assert.equal(await row.locator('input').count(),0);assert(!(await row.innerText()).includes('6875bfac-874e-4784-ab30-41807442951d'));assert(!(await row.innerText()).includes('https://'));
+ await page.goto(base+'/app?q='+encodeURIComponent(lead.name));const row=page.locator('tr[data-lead-id="'+lead.id+'"]');await row.waitFor();assert.equal(await row.locator('input').count(),0);const firstRowBox=await row.boundingBox();assert(firstRowBox.y+firstRowBox.height<740,'First lead must be visible at 1600x780 without page scrolling');assert(!(await row.innerText()).includes('6875bfac-874e-4784-ab30-41807442951d'));assert(!(await row.innerText()).includes('https://'));
  const grid=page.getByLabel('Scrollable leads table',{exact:true});const first=await row.locator('.freeze-name').boundingBox(),second=await row.locator('.freeze-mobile').boundingBox();
  await grid.evaluate(el=>{el.scrollLeft=450;});const shifted=await row.locator('.freeze-name').boundingBox(),shiftedMobile=await row.locator('.freeze-mobile').boundingBox();assert(Math.abs(first.x-shifted.x)<2);assert(Math.abs(second.x-shiftedMobile.x)<2);await grid.evaluate(el=>{el.scrollLeft=0;});
- mkdirSync(root,{recursive:true});const mask=[page.locator('.app-header > span')];await page.locator('.leads-workspace').screenshot({path:root+'/all-leads-table.png'});
+ mkdirSync(root,{recursive:true});const mask=[page.locator('.app-header > span')];await page.locator('.leads-workspace').screenshot({path:root+'/all-leads-table.png'});await page.screenshot({path:root+'/all-leads-above-fold.png',mask,maskColor:'#f3f6fa'});
  stage='all six detail tabs';await row.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();const drawer=page.getByRole('dialog',{name:lead.name,exact:true});await drawer.waitFor();assert((await drawer.innerText()).includes('6875bfac-874e-4784-ab30-41807442951d'));
  await drawer.getByRole('tab',{name:'Source',exact:true}).click();assert((await drawer.innerText()).includes('dailyhealthfocus.info'));assert((await drawer.innerText()).includes('instagram'));assert((await drawer.innerText()).includes('https://dailyhealthfocus.info/Wife/'));
  await drawer.screenshot({path:root+'/all-leads-source-panel.png'});
@@ -59,7 +59,7 @@ try{
  const query=await page.getByLabel('Search name or mobile',{exact:true}).inputValue();await row.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();await page.getByRole('button',{name:'Close lead details',exact:true}).click();assert.equal(await page.getByLabel('Search name or mobile',{exact:true}).inputValue(),query);
  assert.deepEqual(errors,[]);await context.close();await browser.close();browser=null;
  stage='data preservation';assert.deepEqual(await snapshot(),before);const after=(await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows;assert.deepEqual(after,passwords);
- writeFileSync(root+'/evidence.json',JSON.stringify({main_crm:base,existing_record_only:true,new_leads:0,new_users:0,all_public_tables_unchanged:true,account_passwords_unchanged:true,compact_table:true,frozen_columns:true,six_tabs:true,drafts_retained:true,pending_close_guard:true,intercepted_call_retries:callRequests.length,intercepted_callback_retries:callbackRequests.length,intercepted_stale_edits:patches.length,server_filters:true,ui_errors:errors.length,live_website_integration:'pending'},null,2));
+ writeFileSync(root+'/evidence.json',JSON.stringify({main_crm:base,existing_record_only:true,new_leads:0,new_users:0,all_public_tables_unchanged:true,account_passwords_unchanged:true,compact_table:true,first_row_visible_at_1600x780:true,frozen_columns:true,six_tabs:true,drafts_retained:true,pending_close_guard:true,intercepted_call_retries:callRequests.length,intercepted_callback_retries:callbackRequests.length,intercepted_stale_edits:patches.length,server_filters:true,ui_errors:errors.length,live_website_integration:'pending'},null,2));
  console.log('PASS main CRM: compact table, frozen Name/Mobile, six detail tabs, real read APIs, draft retention, pending close guard, intercepted same-payload retries/stale edit, actual server filters; zero new leads/users and all existing public records/passwords unchanged.');
 }catch(e){console.error('Stage: '+stage);if(e.name==='TimeoutError'||e.name==='AssertionError')console.error(String(e.message).split('\n').slice(0,7).join('\n'));reportFailure(e,'All Leads UI');}
 finally{await browser?.close();if(auth)await auth.auth.signOut({scope:'local'});await db?.end();}

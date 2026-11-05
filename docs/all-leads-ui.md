@@ -2,6 +2,10 @@
 
 The existing authenticated main CRM at `http://localhost:3000/app` now has a compact readable lead table, frozen Name/Mobile columns, a concise filter toolbar and a right-side detail drawer. This is a frontend slice using existing API/RLS/reporting functionality. No migration, new backend endpoint, staff-role change, Admin/Invite Staff change or website integration is introduced.
 
+Follow-up after the operator's screenshot: the new controls were present, but oversized page/account/reminder/filter spacing pushed the table below the visible desktop viewport. Main-page-only spacing now compacts the navigation/account/reminder area, combines the applied-filter row with collapsed saved views, removes empty status spacing, and places calling guidance below the table. All account/reminder controls remain available; other Admin/onboarding pages are not restyled. A rerun at **1600×780** verified that the first existing lead row is fully visible without page scrolling (bottom below 740px), and repeated all six-tab/draft/retry/filter/preservation checks successfully. Build, TypeScript and the 24-asset browser secret scan passed again. The new screenshot is `.cache/all-leads-ui/all-leads-above-fold.png`.
+
+Repository recovery during this follow-up: master contained 41 NUL bytes, while its reflog and the exact index both identified `5be8fe1edd8858e4ed6666832bf036176f2b0a96` as the last completed commit. After backing up the corrupt reference under ignored `.cache/git-recovery/`, only that branch reference was restored to the verified commit. No reset, reinitialization, index discard or history rewrite was performed; unrelated next-env.d.ts edits were preserved. Tool-owned checkpoint references were not modified.
+
 ## Resulting workflow
 
 - Rows initially display text instead of a form full of inputs. Name/mobile, current status, course/price, website/configured landing page, reported traffic, receipt time, address and notes remain available. Name/Mobile stay visible while horizontally scrolling; headers stay visible when scrolling vertically.
