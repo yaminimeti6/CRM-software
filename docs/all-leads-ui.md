@@ -1,6 +1,6 @@
 # Main All Leads UI improvement — 2026-11-05
 
-Latest preview (2026-11-06): [theme-preview.md](theme-preview.md) covers the role-aware sidebar/top bar and persisted Light/Dark/Mixed themes on All Leads. The next page rollout awaits operator selection; backend behavior and live-integration pending status are unchanged.
+Latest rollout (2026-11-06): [ui-theme-rollout.md](ui-theme-rollout.md) covers the shared sidebar/top bar and persisted Light/Dark/Mixed themes across all authenticated pages and public sign-in/invitation screens. Backend behavior and live-integration pending status are unchanged.
 
 The existing authenticated main CRM at `http://localhost:3000/app` now has a compact readable lead table, frozen Name/Mobile columns, a concise filter toolbar and a right-side detail drawer. This is a frontend slice using existing API/RLS/reporting functionality. No migration, new backend endpoint, staff-role change, Admin/Invite Staff change or website integration is introduced.
 

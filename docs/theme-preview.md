@@ -1,5 +1,7 @@
 # All Leads navigation and theme preview — 2026-11-06
 
+**Superseded scope:** after the operator clarified the whole-app requirement, the shell/themes were rolled out to all ten authenticated CRM pages and both public authentication screens. See [ui-theme-rollout.md](ui-theme-rollout.md). The preview-only/awaiting-selection notes below describe the earlier checkpoint, not the current delivery state.
+
 ## Scope and approval boundary
 
 The first preview is available on the existing main CRM at `http://localhost:3000/app`. It includes All Leads, a collapsible role-aware sidebar, a top bar, and Light, Dark and Mixed themes. **Mixed is the default**: dark sidebar/top bar with light content/table. The operator must choose the design before applying the shell to the other existing pages. No other page's markup or Admin/Invite Staff behavior is redesigned in this slice.

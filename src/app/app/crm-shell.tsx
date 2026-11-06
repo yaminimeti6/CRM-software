@@ -1,8 +1,10 @@
 'use client';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {usePathname} from 'next/navigation';
-import {crmNavigation,crmThemes,normalizeCrmTheme,type CrmTheme} from '@/lib/crm-navigation';
+import Link from 'next/link';
+import {crmNavigation,crmThemes,type CrmTheme} from '@/lib/crm-navigation';
 import {roleLabels,type Role} from '@/lib/roles';
+import {useCrmTheme} from '../use-crm-theme';
 
 export function CrmIcon({name}:{name:string}){
  const paths:Record<string,ReactNode>={
@@ -35,14 +37,15 @@ function ReminderMenu(){
 
 type User={name:string;email?:string|null;username?:string|null;role:Role;organizationId:string};
 export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()=>Promise<void>;children:ReactNode}){
- const pathname=usePathname(),[theme,setTheme]=useState<CrmTheme>('mixed'),[collapsed,setCollapsed]=useState(false),[mobile,setMobile]=useState(false),[mobileOpen,setMobileOpen]=useState(false);
+ const [theme,chooseTheme]=useCrmTheme();
+ const pathname=usePathname(),[collapsed,setCollapsed]=useState(false),[mobile,setMobile]=useState(false),[mobileOpen,setMobileOpen]=useState(false);
  const side=useRef<HTMLElement>(null),menuButton=useRef<HTMLButtonElement>(null);
  function closeNavigation(){setMobileOpen(false);requestAnimationFrame(()=>menuButton.current?.focus());}
- const groups=crmNavigation(user.role),current=groups.flatMap(group=>group.items).find(item=>item.href===pathname);
+ const groups=crmNavigation(user.role),currentGroup=groups.find(group=>group.items.some(item=>item.href===pathname)),current=currentGroup?.items.find(item=>item.href===pathname);
  useEffect(()=>{
-  try{setTheme(normalizeCrmTheme(localStorage.getItem('crm.ui.theme.v1')));setCollapsed(localStorage.getItem('crm.ui.sidebar.v1')==='collapsed');}catch{}
+  try{setCollapsed(localStorage.getItem('crm.ui.sidebar.v1')==='collapsed');}catch{}
   const query=matchMedia('(max-width: 900px)');const resize=()=>{setMobile(query.matches);if(!query.matches)setMobileOpen(false);};resize();query.addEventListener('change',resize);
-  const storage=(event:StorageEvent)=>{if(event.key==='crm.ui.theme.v1')setTheme(normalizeCrmTheme(event.newValue));if(event.key==='crm.ui.sidebar.v1')setCollapsed(event.newValue==='collapsed');};window.addEventListener('storage',storage);
+  const storage=(event:StorageEvent)=>{if(event.key==='crm.ui.sidebar.v1')setCollapsed(event.newValue==='collapsed');};window.addEventListener('storage',storage);
   return()=>{query.removeEventListener('change',resize);window.removeEventListener('storage',storage);};
  },[]);
  useEffect(()=>{
@@ -50,7 +53,6 @@ export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()
   const keyboard=(event:KeyboardEvent)=>{if(event.key==='Escape'){closeNavigation();}if(event.key==='Tab'){const items=Array.from(side.current?.querySelectorAll<HTMLElement>('a[href],button')??[]).filter(item=>item.getClientRects().length>0);if(event.shiftKey&&document.activeElement===items[0]){event.preventDefault();items.at(-1)?.focus();}else if(!event.shiftKey&&document.activeElement===items.at(-1)){event.preventDefault();items[0]?.focus();}}};document.addEventListener('keydown',keyboard);
   return()=>{document.body.style.overflow=previousOverflow;document.removeEventListener('keydown',keyboard);};
  },[mobileOpen]);
- function chooseTheme(next:CrmTheme){setTheme(next);try{localStorage.setItem('crm.ui.theme.v1',next);}catch{}}
  function toggleSidebar(){const next=!collapsed;setCollapsed(next);try{localStorage.setItem('crm.ui.sidebar.v1',next?'collapsed':'expanded');}catch{}}
  const initials=user.name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'U';
  return <div className="crm-shell" data-crm-theme={theme} data-collapsed={collapsed} data-mobile-open={mobileOpen}>
@@ -58,13 +60,17 @@ export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()
   {mobileOpen&&<button className="crm-mobile-backdrop" aria-label="Close navigation backdrop" onClick={()=>{closeNavigation();}}/>}
   <aside ref={side} className="crm-sidebar" role={mobileOpen?'dialog':undefined} aria-modal={mobileOpen||undefined} aria-label="Main navigation" inert={mobile&&!mobileOpen}>
    <div className="crm-brand"><span className="crm-brand-mark"><CrmIcon name="leads"/></span><div className="crm-sidebar-text"><strong>Staff CRM</strong><span>Team workspace</span></div><button className="crm-mobile-close crm-icon-button" aria-label="Close navigation" onClick={()=>{closeNavigation();}}><CrmIcon name="close"/></button></div>
-   <nav>{groups.map(group=><div className="crm-nav-group" key={group.label}><p className="crm-nav-caption">{group.label}</p>{group.items.map(item=><a key={item.href} href={item.href} title={collapsed?item.label:undefined} aria-label={item.label} aria-current={pathname===item.href?'page':undefined}><CrmIcon name={item.icon}/><span className="crm-sidebar-text">{item.label}</span>{pathname===item.href&&<span className="crm-active-dot"/>}</a>)}</div>)}</nav>
+   <nav>{groups.map(group=><div className="crm-nav-group" key={group.label}><p className="crm-nav-caption">{group.label}</p>{group.items.map(item=><Link key={item.href} href={item.href} prefetch={false} onClick={()=>{if(mobileOpen)closeNavigation();}} title={collapsed?item.label:undefined} aria-label={item.label} aria-current={pathname===item.href?'page':undefined}><CrmIcon name={item.icon}/><span className="crm-sidebar-text">{item.label}</span>{pathname===item.href&&<span className="crm-active-dot"/>}</Link>)}</div>)}</nav>
    <div className="crm-sidebar-bottom"><div className="crm-sidebar-workspace"><span className="crm-avatar">{initials}</span><span className="crm-sidebar-text"><strong>{user.name}</strong><small>{roleLabels[user.role]}</small></span></div><button className="crm-collapse-button" onClick={toggleSidebar} aria-label={collapsed?'Expand sidebar':'Collapse sidebar'} title={collapsed?'Expand sidebar':'Collapse sidebar'}><CrmIcon name="collapse"/><span className="crm-sidebar-text">Collapse sidebar</span></button></div>
   </aside>
-  <div className="crm-main" inert={mobileOpen}><header className="crm-topbar"><div className="crm-page-heading"><button ref={menuButton} className="crm-mobile-toggle crm-icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={()=>setMobileOpen(true)}><CrmIcon name="menu"/></button><div><span className="crm-breadcrumb">Workspace</span><h2>{current?.label??'All Leads'}</h2></div></div><div className="crm-topbar-actions">
+  <div className="crm-main" inert={mobileOpen}><header className="crm-topbar"><div className="crm-page-heading"><button ref={menuButton} className="crm-mobile-toggle crm-icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={()=>setMobileOpen(true)}><CrmIcon name="menu"/></button><div><span className="crm-breadcrumb">{currentGroup?.label??'Workspace'}</span><h2>{current?.label??'Access unavailable'}</h2></div></div><div className="crm-topbar-actions">
    {user.role!=='creative_analyst'&&<ReminderMenu/>}
-   <div className="crm-theme-switch" role="group" aria-label="Color theme">{crmThemes.map(name=><button key={name} type="button" aria-label={'Theme '+name[0].toUpperCase()+name.slice(1)} aria-pressed={theme===name} onClick={()=>chooseTheme(name)} title={name[0].toUpperCase()+name.slice(1)+' theme'}><CrmIcon name={name}/><span>{name[0].toUpperCase()+name.slice(1)}</span></button>)}</div>
+   <CrmThemeSwitch theme={theme} onChange={chooseTheme}/>
    <details className="crm-top-menu crm-profile-menu"><summary aria-label="User profile menu"><span className="crm-avatar">{initials}</span><span className="crm-profile-label">{user.name}</span><CrmIcon name="chevron"/></summary><div className="crm-menu-content"><strong>Your staff account</strong><dl><dt>Name</dt><dd>{user.name}</dd><dt>Role</dt><dd>{roleLabels[user.role]}</dd><dt>{user.username?'Username':'Email'}</dt><dd>{user.username||user.email||'Not required'}</dd><dt>Organization ID</dt><dd>{user.organizationId}</dd></dl><form action={logoutAction}><button>Sign out</button></form></div></details>
   </div></header><div id="crm-page-content" className="crm-content" tabIndex={-1}>{children}</div></div>
  </div>;
+}
+
+export function CrmThemeSwitch({theme,onChange}:{theme:CrmTheme;onChange:(theme:CrmTheme)=>void}){
+ return <div className="crm-theme-switch" role="group" aria-label="Color theme">{crmThemes.map(name=><button key={name} type="button" aria-label={'Theme '+name[0].toUpperCase()+name.slice(1)} aria-pressed={theme===name} onClick={()=>onChange(name)} title={name[0].toUpperCase()+name.slice(1)+' theme'}><CrmIcon name={name}/><span>{name[0].toUpperCase()+name.slice(1)}</span></button>)}</div>;
 }

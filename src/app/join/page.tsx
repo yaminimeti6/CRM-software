@@ -1,4 +1,5 @@
 'use client';
+import {AuthFrame} from '../auth-frame';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 export default function Join() {
     const [invitation, setInvitation] = useState(''), [code, setCode] = useState(''), [info, setInfo] = useState<{ name: string; role: string; state: string } | null>(null), [pending, setPending] = useState(false), [error, setError] = useState(''); const initialized = useRef(false);
@@ -9,9 +10,9 @@ export default function Join() {
         window.addEventListener('hashchange', read); return () => window.removeEventListener('hashchange', read);
     }, []);
     async function accept(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const values = new FormData(event.currentTarget); if (values.get('password') !== values.get('confirm')) { setError('Passwords must match.'); return; } setPending(true); setError(''); try { const response = await fetch('/api/team/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ invitation, username: values.get('username'), password: values.get('password') }) }); const data = await response.json(); if (!response.ok) throw new Error(data.error); location.assign('/app'); } catch (e) { setError(e instanceof Error ? e.message : 'Setup unavailable.'); } finally { setPending(false); } }
-    return <section><h1>Activate your team account</h1><p>Your invitation is a private, temporary onboarding credential. No email address is needed.</p>{error && <p role="alert">{error}</p>}
+    return <AuthFrame><section><h1>Activate your team account</h1><p>Your invitation is a private, temporary onboarding credential. No email address is needed.</p>{error && <p role="alert">{error}</p>}
         {!info && <form onSubmit={e => { e.preventDefault(); void validate(code.trim()); }}><label>Invitation code<input value={code} onChange={e => setCode(e.target.value)} required autoComplete="off" /></label><button disabled={pending}>Check invitation</button></form>}
         {info && info.state !== 'pending' && <p role="alert">This invitation is {info.state === 'accepted' ? 'already used' : info.state}. Ask your Admin for a new invitation. Existing accounts should sign in.</p>}
         {info?.state === 'pending' && <form onSubmit={accept}><p>Display name: <strong>{info.name}</strong> · Role: {info.role.replaceAll('_', ' ')}</p><label>Username<input name="username" required minLength={3} maxLength={32} pattern="[A-Za-z][A-Za-z0-9_]{2,31}" autoComplete="username" /></label><p>Usernames are unique across this CRM, case-insensitive, 3–32 characters. Display names are separate.</p><label>Password<input name="password" type="password" required minLength={12} maxLength={1024} autoComplete="new-password" /></label><label>Confirm password<input name="confirm" type="password" required minLength={12} maxLength={1024} autoComplete="new-password" /></label><button disabled={pending}>{pending ? 'Activating…' : 'Activate account'}</button></form>}
-        <p><a href="/login">Sign in</a></p></section>;
+        <p><a href="/login">Sign in</a></p></section></AuthFrame>;
 }

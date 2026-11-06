@@ -1,6 +1,6 @@
 # CRM PDF feature audit — 2026-11-05
 
-UI preview update (2026-11-06): All Leads now has the first-stage sidebar/top bar and three persisted themes, browser-tested locally. The rest of the app's visual rollout awaits selection. See [theme-preview.md](theme-preview.md). This does not change any live integration status or authorize another backend roadmap step.
+UI rollout update (2026-11-06): all ten authenticated CRM pages now share the sidebar/top bar and three persisted themes; sign-in/invitation screens use the same theme frame. Cross-page browser checks passed locally. See [ui-theme-rollout.md](ui-theme-rollout.md). This does not change any live integration status or authorize another backend roadmap step.
 
 Source: supplied `Crm.Pdf`, version 1.0, 26 pages, sections 1–30, read in full for this review. The numbered development roadmap is paused. This audit does not authorize implementation of pending features.
 
