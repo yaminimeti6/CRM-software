@@ -1,5 +1,7 @@
 # CRM PDF feature audit — 2026-11-05
 
+UI preview update (2026-11-06): All Leads now has the first-stage sidebar/top bar and three persisted themes, browser-tested locally. The rest of the app's visual rollout awaits selection. See [theme-preview.md](theme-preview.md). This does not change any live integration status or authorize another backend roadmap step.
+
 Source: supplied `Crm.Pdf`, version 1.0, 26 pages, sections 1–30, read in full for this review. The numbered development roadmap is paused. This audit does not authorize implementation of pending features.
 
 Read-only live review update: current /Wife/ HTML is an advertorial leading to a separate storefront, not the supplied ZIP form. The actual order/Sheet collector is unverified and live integration remains pending. See [developer handoff and exact blockers](live-wife-developer-handoff.md). No public page, checkout, hosting or deployment was changed.

@@ -1,5 +1,7 @@
 # Main All Leads UI improvement — 2026-11-05
 
+Latest preview (2026-11-06): [theme-preview.md](theme-preview.md) covers the role-aware sidebar/top bar and persisted Light/Dark/Mixed themes on All Leads. The next page rollout awaits operator selection; backend behavior and live-integration pending status are unchanged.
+
 The existing authenticated main CRM at `http://localhost:3000/app` now has a compact readable lead table, frozen Name/Mobile columns, a concise filter toolbar and a right-side detail drawer. This is a frontend slice using existing API/RLS/reporting functionality. No migration, new backend endpoint, staff-role change, Admin/Invite Staff change or website integration is introduced.
 
 Follow-up after the operator's screenshot: the new controls were present, but oversized page/account/reminder/filter spacing pushed the table below the visible desktop viewport. Main-page-only spacing now compacts the navigation/account/reminder area, combines the applied-filter row with collapsed saved views, removes empty status spacing, and places calling guidance below the table. All account/reminder controls remain available; other Admin/onboarding pages are not restyled. A rerun at **1600×780** verified that the first existing lead row is fully visible without page scrolling (bottom below 740px), and repeated all six-tab/draft/retry/filter/preservation checks successfully. Build, TypeScript and the 24-asset browser secret scan passed again. The new screenshot is `.cache/all-leads-ui/all-leads-above-fold.png`.
