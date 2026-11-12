@@ -12,7 +12,7 @@ Organization default columns include visibility, order, width and scoped dynamic
 
 The existing server search now matches CRM Lead ID, submission UUID, supplied order ID and reported creative_id / AdCrevId / ad_id, in addition to name/mobile. It uses literal matching within the existing organization/filter scope and does not infer attribution or broaden Analyst access.
 
-Admin-only CSV export uses the applied server filters across all matching pages. It rejects more than 5000 rows or 8 MB instead of silently truncating. A stable SQL collector captures the filtered pages under one statement snapshot before the legitimate export audit is appended. The file includes original customer/order/source/dynamic answer fields; missing traffic remains Unknown. UTF-8 BOM, quoted fields and formula-trigger escaping support safe spreadsheet opening. CSV is available; native XLSX export is not implemented. Export files and private credentials stay ignored.
+Admin-only CSV export uses the applied server filters across all matching pages. It rejects more than 5000 rows or 8 MB instead of silently truncating. A stable SQL collector captures the filtered pages under one statement snapshot before the legitimate export audit is appended. The file includes original customer/order/source/dynamic answer fields; missing traffic remains Unknown. UTF-8 BOM, quoted fields and formula-trigger escaping support safe spreadsheet opening. CSV and native XLSX are available; see native-recovery-and-xlsx.md for the subsequent format/recovery verification. Export files and private credentials stay ignored.
 
 ## Reports
 
@@ -30,4 +30,4 @@ Detailed ignored evidence: .cache/admin-workspace/evidence.json and screenshots.
 
 ## Remaining external work
 
-The owner has not selected an OTP provider or production hosting. Actual OTP delivery/verify, public HTTPS and production acceptance remain pending. PostgreSQL native backup tools and an isolated restore target are absent, so no actual backup/restore drill is claimed. See production-and-otp-readiness.md for exact prerequisites and the prepared recovery/deployment procedure. Live website-to-CRM/real Sheet and actual Meta consent/sync remain pending independently.
+The owner made customer OTP optional and authorized temporary ngrok access. Actual OTP and permanent production hosting remain pending. A scoped native local restore now passed for 77 tables; HTTPS sign-in/anonymous denial passed, while authenticated public checks need separate approval. Full production recovery is not certified. See production-and-otp-readiness.md for exact prerequisites and the prepared recovery/deployment procedure. Live website-to-CRM/real Sheet and actual Meta consent/sync remain pending independently.

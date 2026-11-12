@@ -1,6 +1,6 @@
 # CRM PDF feature audit — 2026-11-05
 
-Local feature update (2026-11-12): Admin status/default-column settings, ID search, CSV export, personal column controls and dashboard charts are implemented locally. Native XLSX, actual OTP, public HTTPS and backup restore remain pending. See [workspace-completion-local.md](workspace-completion-local.md).
+Local feature update (2026-11-12): Admin status/default-column settings, ID search, CSV export, personal column controls and dashboard charts are implemented locally. Subsequent native XLSX and scoped 77-table local recovery checks passed. Customer OTP is optional for the pilot. Temporary HTTPS sign-in/anonymous denial passed; authenticated public and production recovery checks remain pending. See [native-recovery-and-xlsx.md](native-recovery-and-xlsx.md). See [workspace-completion-local.md](workspace-completion-local.md).
 
 UI rollout update (2026-11-06): all ten authenticated CRM pages now share the sidebar/top bar and three persisted themes; sign-in/invitation screens use the same theme frame. Cross-page browser checks passed locally. See [ui-theme-rollout.md](ui-theme-rollout.md). This does not change any live integration status or authorize another backend roadmap step.
 
@@ -38,7 +38,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 5 Column resizing / reordering | Tested locally | Personal width controls and accessible move-left/right ordering; frozen identities preserved |
 | 5 Hide/show columns | Tested locally | Personal fixed/answer column visibility; Name/Mobile/Actions remain mandatory |
 | 5 Saved custom views | Tested locally | Private filter/sort/quiz-column/page-size views; no arbitrary column layout |
-| 5 Permission-controlled CSV/Excel export | Tested locally / Pending | Admin-only filtered CSV, formula-safe and audited; native XLSX pending |
+| 5 Permission-controlled CSV/Excel export | Tested locally / Pending | Admin-only filtered CSV and native XLSX, text/formula-safe and audited |
 | 5 Lead detail panel / history / activity timeline | Tested locally | Right-side Order/Source/Answers/Calls/Follow-ups/History drawer reuses existing APIs; main browser checks passed. See all-leads-ui.md |
 | 5 Saving/success/error indicators | Tested locally | Existing row and request state messages |
 | 6 Standard timestamp/name/mobile, optional dynamic fields | Tested locally | Server timestamp and validation, JSONB answers; original values preserved |
@@ -82,7 +82,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 13 Creative Performance Software data connection | Pending | No real external system integration verified |
 | 13 Advisory budget recommendations / automatic changes | Pending | Recommendations absent; automatic budget changes excluded |
 | 14 Original OTP labels retained independently | Tested locally | Untrusted legacy OTP metadata; never confirmation proof |
-| 14 Backend OTP request/verify, lifecycle, resend/expiry/throttle/provider secrets | Pending | No provider integration; no claimed trusted OTP verification |
+| 14 Backend OTP request/verify, lifecycle, resend/expiry/throttle/provider secrets | Pending | Optional for current pilot by owner; no provider integration or trusted OTP verification claimed |
 | 14 Save before OTP, later trusted verification update; key rotation | Pending | Requires provider/deployed implementation and authorized rotation |
 | 15 Apps Script forward/synchronize compatibility | Pending | Browser dual delivery prepared instead; no Apps Script deployment inspected |
 | 15 Existing JSON public lead API, validation, UUID/time/source, dynamic/tracking/idempotency/receipt | Tested locally | Actual main challenge/POST/browser and database integration |
@@ -92,7 +92,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 16 Configurable repeat policy | Pending | Current behavior preserves repeat inquiries; no full policy UI |
 | 17 Organization/brand/product/page/version hierarchy and reporting | Tested locally | Catalog and scoped report tests; optional unknown mapping retained |
 | 18 Admin/Manager/Telecaller/Analyst backend role boundaries | Tested locally | Existing RLS/API tests; analysts denied raw customer PII |
-| 18 Full Admin export/status/default-field controls | Tested locally / Pending | Admin status/default fixed/answer columns and bounded CSV export; native XLSX pending |
+| 18 Full Admin export/status/default-field controls | Tested locally / Pending | Admin status/default fixed/answer columns and bounded CSV/XLSX export |
 | 19 Follow-up dates/notes, optional caller, due today, overdue/count/history | Tested locally | Existing follow-up module and prior main integration |
 | 20 Relational records plus JSONB, raw payload, internal/external IDs | Tested locally | Migrations and submitted-order projection tests |
 | 20 Constraints/indexes/append-only history/protected fields/migrations | Tested locally | Existing SQL tests; no schema change required here |
@@ -108,7 +108,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 24 Tailwind/shadcn/high-performance grid library parity | Pending | Existing custom React table/CSS; not the specified full grid surface |
 | 24 Public hosting, separate staging/production environments | Pending | Localhost only; hosting decision/access required |
 | 25 Server credentials, validation, RLS/grants, PII protection and login/session controls | Tested locally | Existing security/authorization evidence; no new auth changes |
-| 25 HTTPS, backup/restore drill, organization-wide retention/deletion policy, separate production credentials | Pending | Import retention exists; full operational policy/recovery proof absent |
+| 25 HTTPS, backup/restore drill, organization-wide retention/deletion policy, separate production credentials | Pending | Scoped native 77-table local restore and temporary HTTPS entry verified; full production recovery/retention and authenticated public workflow pending |
 | 26 Phase 1/2 roadmap | Pending | Most calling core implemented; live capture and listed UI/export gaps remain; roadmap paused |
 | 26 Phase 3 roadmap | Pending | Local attribution exists; external software integration/live capture pending |
 | 26 Phase 4 roadmap | Pending | Local Meta model exists; live sync, alerts, scheduled summaries and optional AI reports pending |
