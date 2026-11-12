@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/run-crm.mjs dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/run-crm.mjs start",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.ts tests/*.test.mjs",
     "setup:admin": "node scripts/setup-admin.mjs",
@@ -25,7 +25,9 @@
     "verify:attribution": "node --experimental-strip-types scripts/verify-attribution.mjs",
     "verify:campaigns": "node --experimental-strip-types scripts/verify-campaigns.mjs",
     "worker:meta": "node --experimental-strip-types scripts/meta-worker.ts",
-    "verify:meta": "node --experimental-strip-types scripts/verify-meta.mjs"
+    "verify:meta": "node --experimental-strip-types scripts/verify-meta.mjs",
+    "preview:build": "node scripts/run-crm.mjs preview-build",
+    "preview": "node scripts/run-crm.mjs preview"
   },
   "keywords": [],
   "author": "",

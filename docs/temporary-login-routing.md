@@ -21,3 +21,5 @@ Automated listener tests cover same build, stale IPv4/IPv6 split, one unavailabl
 Prior automatic review did not authorize forwarding an existing Admin session/customer record through ngrok for an agent-run test. The owner's report of successful manual login is not treated as that separate approval; no agent-authenticated ngrok test was performed. Live /Wife/ to CRM/real Sheet acceptance, authenticated public calling/export origin checks and actual Meta consent remain separate pending work.
 
 No GitHub push or permanent deployment. Unrelated workspace edits are preserved.
+
+Subsequent preview performance update: the temporary tunnel now uses a separate optimized local build. See temporary-preview-performance.md for current run commands and theme evidence.

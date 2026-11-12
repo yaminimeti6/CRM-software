@@ -64,7 +64,9 @@
     ".next-campaign-check/types/**/*.ts",
     ".next-campaign-check/dev/types/**/*.ts",
     ".next-meta-check/types/**/*.ts",
-    ".next-meta-check/dev/types/**/*.ts"
+    ".next-meta-check/dev/types/**/*.ts",
+    ".cache/crm-preview-build/types/**/*.ts",
+    ".cache/crm-preview-build/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

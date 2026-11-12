@@ -1,0 +1,10 @@
+import {spawn}from 'node:child_process';import {fileURLToPath}from 'node:url';import {existsSync,mkdirSync,writeFileSync}from 'node:fs';import path from 'node:path';import {assertCrmPortFree}from './lib/crm-port.mjs';
+try{
+const workspace=fileURLToPath(new URL('../',import.meta.url));process.chdir(workspace);const[mode,...extra]=process.argv.slice(2);if(!['dev','start','preview','preview-build'].includes(mode))throw Error('Choose dev, start, preview or preview-build');if(mode.startsWith('preview')&&extra.length)throw Error('Temporary preview uses fixed port 3000; extra preview arguments are not supported.');
+let port=3000;const index=extra.findIndex(x=>x==='--port'||x==='-p'),inline=extra.find(x=>x.startsWith('--port='));if(index>=0)port=Number(extra[index+1]);else if(inline)port=Number(inline.slice(7));
+await assertCrmPortFree(port);const preview=mode.startsWith('preview'),buildDir=preview?'.cache/crm-preview-build':process.env.CRM_NEXT_DIST_DIR??'.next';if(mode==='preview'&&!existsSync(path.join(buildDir,'BUILD_ID')))throw Error('Run npm.cmd run preview:build before starting the temporary preview.');
+const command=mode==='preview-build'?'build':mode==='preview'?'start':mode;const args=[fileURLToPath(new URL('../node_modules/next/dist/bin/next',import.meta.url)),command,...(command==='build'?extra:['--hostname','localhost','--port',String(port),...extra])];
+const child=spawn(process.execPath,args,{cwd:workspace,env:{...process.env,CRM_NEXT_DIST_DIR:buildDir},stdio:'inherit',windowsHide:true});child.once('error',()=>{console.error('CRM process could not start.');process.exitCode=1;});child.once('exit',code=>{process.exitCode=code??1;});for(const signal of['SIGINT','SIGTERM'])process.on(signal,()=>child.kill(signal));
+if(command!=='build'){mkdirSync('.cache',{recursive:true});writeFileSync('.cache/crm-server-runtime.json',JSON.stringify({mode,port,buildDir,pid:child.pid,started_at:new Date().toISOString()},null,2));}
+
+}catch(e){console.error(e.message);process.exitCode=1;}
