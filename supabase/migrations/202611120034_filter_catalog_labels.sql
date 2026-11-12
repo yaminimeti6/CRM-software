@@ -1,0 +1,16 @@
+begin;
+-- Fix catalog labels: ingestion.kind is provenance, not the catalog hierarchy key.
+-- Preserve existing authorization, snapshot identities, source filters and grants.
+create or replace function public.lead_filter_options() returns jsonb language plpgsql stable security definer set search_path='' as $$declare org uuid:=public.lead_organization();r jsonb:='{}';k text;catalog_kind text;begin
+ if org is null then raise exception 'Operational staff required' using errcode='42501';end if;
+ foreach k in array array['brands','products','landing_pages']loop catalog_kind=case k when 'brands' then 'brand' when 'products' then 'product' else 'landing_page' end;
+ r=r||jsonb_build_object(k,coalesce((select jsonb_agg(x)from(select source_snapshot->'configured_attribution'->catalog_kind->>'id' value,string_agg(distinct source_snapshot->'configured_attribution'->catalog_kind->>'name',' / ')||case when bool_or(coalesce(c.archived,false))then ' (archived)' else '' end label from public.lead_ingestion i left join public.catalog_items c on c.organization_id=org and c.kind=catalog_kind and c.id::text=i.source_snapshot->'configured_attribution'->catalog_kind->>'id' where i.organization_id=org and i.source_snapshot->'configured_attribution'->catalog_kind->>'id' is not null group by 1 order by 2 limit 500)x),'[]'));
+ end loop;
+ foreach k in array array['websites','traffic_sources']loop
+ r=r||jsonb_build_object(k,coalesce((select jsonb_agg(x)from(select distinct crm_private.submitted_order(i)->>case k when 'websites' then 'website' else 'traffic_source' end value,crm_private.submitted_order(i)->>case k when 'websites' then 'website' else 'traffic_source' end label from public.lead_ingestion i where i.organization_id=org order by 2 limit 500)x),'[]'));
+ end loop;
+ return r||jsonb_build_object('sources',coalesce((select jsonb_agg(x)from(select distinct s.id::text value,s.name||' ['||s.form_id||']' label from public.ingestion_sources s join public.lead_ingestion i on i.source_id=s.id where i.organization_id=org order by 2 limit 500)x),'[]'),'versions',coalesce((select jsonb_agg(x)from(select distinct jsonb_build_array(i.source_id::text,coalesce(i.source_snapshot->>'form_version',''))::text value,s.form_id||' / '||case when coalesce(i.source_snapshot->>'form_version','')='' then '(unversioned legacy)' else i.source_snapshot->>'form_version' end label from public.lead_ingestion i join public.ingestion_sources s on s.id=i.source_id where i.organization_id=org order by 2 limit 500)x),'[]'),'callers',coalesce((select jsonb_agg(x)from(select distinct a.caller_id::text value,p.full_name label from public.call_attempts a join public.staff_profiles p on p.id=a.caller_id where a.organization_id=org order by 2 limit 500)x),'[]'),'confirmers',coalesce((select jsonb_agg(x)from(select distinct e.confirmed_by::text value,p.full_name label from public.confirmation_events e join public.staff_profiles p on p.id=e.confirmed_by where e.organization_id=org order by 2 limit 500)x),'[]'),'fields',(select coalesce(jsonb_agg(to_jsonb(f)),'[]')from public.quiz_columns()f),'statuses',(select coalesce(jsonb_agg(to_jsonb(s)order by sort_order,label),'[]')from public.lead_statuses s where organization_id=org));
+end$$;
+
+notify pgrst,'reload schema';
+commit;
