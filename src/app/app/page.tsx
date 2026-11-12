@@ -10,6 +10,6 @@ export default async function Application({ searchParams }: { searchParams: Prom
   const { user } = session; const query = await searchParams;
   return <>
     {query.logout === 'failed' && <p role="alert">Sign-out failed. Please try again.</p>}
-    {user.role === 'creative_analyst' ? <section><h1>Customer access restricted</h1><p>Your role does not include customer lead records. Contact your administrator for permitted access.</p></section> : <Leads initialSearch={typeof query.q === 'string' ? query.q.slice(0, 80) : ''} />}
+    {user.role === 'creative_analyst' ? <section><h1>Customer access restricted</h1><p>Your role does not include customer lead records. Contact your administrator for permitted access.</p></section> : <Leads canExport={user.role==='admin'} preferenceKey={user.organizationId+':'+user.id} initialSearch={typeof query.q === 'string' ? query.q.slice(0, 80) : ''} />}
   </>;
 }

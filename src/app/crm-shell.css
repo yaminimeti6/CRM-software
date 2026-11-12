@@ -259,3 +259,15 @@ main:has(> .crm-shell) { max-width: none; width: 100%; min-width: 0; margin: 0; 
 
 .crm-shell .daily-queue-help { margin: 0; }
 .crm-shell .daily-queue-help p { max-width: 48ch; }
+
+.crm-shell .status-setting-row,.crm-shell .column-setting-row { display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--crm-border); }
+.crm-shell .status-setting-row label { max-width:200px; }
+.crm-shell .column-setting-row>label:first-child { min-width:180px; }
+.crm-shell .column-setting-row input[type=number] { width:85px; }
+.crm-shell .personal-column-layout[open] { flex-basis:100%; }
+
+.crm-shell .report-chart-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px; }
+.crm-shell .report-chart { max-height:420px;overflow:auto; }
+.crm-shell .report-bar-row { display:grid;grid-template-columns:minmax(90px,1fr) 2fr 50px;gap:8px;align-items:center;margin:8px 0; }
+.crm-shell .report-bar-track { display:block;height:12px;background:var(--crm-soft);border-radius:3px; }
+.crm-shell .report-bar-track>span { display:block;height:100%;background:var(--crm-accent);border-radius:3px; }

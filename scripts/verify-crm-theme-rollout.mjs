@@ -9,7 +9,7 @@ const base='http://localhost:3000',root='.cache/crm-theme-rollout';
 const expectedApi={
  '/app':'/api/leads/search','/app/follow-ups':'/api/follow-ups','/app/performance':'/api/performance',
  '/app/attribution':'/api/ad-attribution/report','/app/meta-spend':'/api/meta/spend','/app/team':'/api/team',
- '/app/ingestion':'/api/ingestion-sources','/app/catalog':'/api/catalog','/app/imports':'/api/imports','/app/meta':'/api/meta/admin',
+ '/app/ingestion':'/api/ingestion-sources','/app/catalog':'/api/catalog','/app/imports':'/api/imports','/app/meta':'/api/meta/admin','/app/settings':'/api/workspace-settings',
 };
 let db,admin,auth,browser,stage='configuration';const errors=[],blockedWrites=[],results=[];
 const readPosts=new Set(['/api/leads/search','/api/performance','/api/ad-attribution/report','/api/meta/spend']);

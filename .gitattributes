@@ -13,3 +13,10 @@ supabase/migrations/202611030028_meta_connection.sql text eol=lf
 supabase/migrations/202611030029_meta_jobs.sql text eol=lf
 supabase/migrations/202611030030_meta_spend_reports.sql text eol=lf
 supabase/migrations/202611030031_meta_retained_status.sql text eol=lf
+
+# Preserve exact bytes used by the development migration checksum ledger.
+supabase/migrations/202611120035_admin_workspace_settings.sql -text whitespace=cr-at-eol
+supabase/migrations/202611120036_identifier_search_export.sql -text whitespace=cr-at-eol
+supabase/migrations/202611120037_dashboard_charts.sql -text whitespace=cr-at-eol
+supabase/migrations/202611120038_settings_validation.sql -text whitespace=cr-at-eol
+supabase/migrations/202611120039_default_answer_columns.sql -text whitespace=cr-at-eol

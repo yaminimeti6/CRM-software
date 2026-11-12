@@ -1,18 +1,20 @@
-export type PerformanceFilter = { from:string; to:string; brand:string; product:string; landing_page:string; source:string };
+export type PerformanceFilter = { from:string; to:string; brand:string; product:string; landing_page:string; source:string;status?:string };
 export const attributionKeys=['brand','product','landing_page','source'] as const;
 const dayMs=86400000;
 export function periodDates(preset:string,now=new Date()):{from:string;to:string}{
  const today=new Date(now.getTime()+330*60000).toISOString().slice(0,10);const end=Date.parse(today+'T00:00:00Z');
+ if(preset==='month')return {from:today.slice(0,7)+'-01',to:today};
  const offset=preset==='yesterday'?1:0;const days=preset==='7'?7:preset==='30'?30:1;
  return {from:new Date(end-(offset+days-1)*dayMs).toISOString().slice(0,10),to:new Date(end-offset*dayMs).toISOString().slice(0,10)};
 }
 export function validatePerformance(value:unknown):PerformanceFilter{
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('Invalid report filters.');
- const v=value as Record<string,unknown>;if(Object.keys(v).some(k=>!['from','to',...attributionKeys].includes(k)))throw Error('Unsupported filter.');
+ const v=value as Record<string,unknown>;if(Object.keys(v).some(k=>!['from','to','status',...attributionKeys].includes(k)))throw Error('Unsupported filter.');
  for(const k of ['from','to']){if(typeof v[k]!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v[k] as string)||!Number.isFinite(Date.parse(v[k] as string))||new Date(Date.parse(v[k] as string)).toISOString().slice(0,10)!==v[k])throw Error('Use valid calendar dates.');}
  const from=v.from as string,to=v.to as string;if(from<'2000-01-01'||to>'2100-12-31'||to<from||(Date.parse(to)-Date.parse(from))/dayMs>365)throw Error('Choose 1 to 366 inclusive days.');
  const result:PerformanceFilter={from,to,brand:'',product:'',landing_page:'',source:''};
  for(const k of attributionKeys){const x=v[k]??'';if(typeof x!=='string'||x!==''&&x!=='unknown'&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(x))throw Error('Choose a valid stable attribution identity.');result[k]=x;}
+ if(v.status!==undefined){if(typeof v.status!=='string'||v.status!==''&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v.status))throw Error('Choose a valid status.');result.status=v.status;}
  return result;
 }
 export const performanceDefinitions=[

@@ -1,5 +1,7 @@
 # CRM PDF feature audit — 2026-11-05
 
+Local feature update (2026-11-12): Admin status/default-column settings, ID search, CSV export, personal column controls and dashboard charts are implemented locally. Native XLSX, actual OTP, public HTTPS and backup restore remain pending. See [workspace-completion-local.md](workspace-completion-local.md).
+
 UI rollout update (2026-11-06): all ten authenticated CRM pages now share the sidebar/top bar and three persisted themes; sign-in/invitation screens use the same theme frame. Cross-page browser checks passed locally. See [ui-theme-rollout.md](ui-theme-rollout.md). This does not change any live integration status or authorize another backend roadmap step.
 
 Source: supplied `Crm.Pdf`, version 1.0, 26 pages, sections 1–30, read in full for this review. The numbered development roadmap is paused. This audit does not authorize implementation of pending features.
@@ -31,18 +33,18 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 5 Automatic saving | Pending | Explicit Save row is current behavior |
 | 5 Real-time updates across users | Tested locally | Prior Step 9 Realtime two-session evidence; fallback authoritative reload |
 | 5 Search name/mobile | Tested locally | Server search; current main synthetic search |
-| 5 Search Lead ID / Creative ID | Pending | Search currently name/mobile; ID search not implemented as requested in PDF |
+| 5 Search Lead ID / Creative ID | Tested locally | Server literal Lead/submission/order/reported Creative ID search within existing tenant/filter scope |
 | 5 Multi-column server filters, sort/date and pagination | Tested locally | Lead-view/submitted-order SQL tests; combined main UI source filters |
-| 5 Column resizing / reordering | Pending | Not implemented |
-| 5 Hide/show columns | Tested locally | Dynamic quiz column selection only; fixed default columns remain |
+| 5 Column resizing / reordering | Tested locally | Personal width controls and accessible move-left/right ordering; frozen identities preserved |
+| 5 Hide/show columns | Tested locally | Personal fixed/answer column visibility; Name/Mobile/Actions remain mandatory |
 | 5 Saved custom views | Tested locally | Private filter/sort/quiz-column/page-size views; no arbitrary column layout |
-| 5 Permission-controlled CSV/Excel export | Pending | Historical import is not export |
+| 5 Permission-controlled CSV/Excel export | Tested locally / Pending | Admin-only filtered CSV, formula-safe and audited; native XLSX pending |
 | 5 Lead detail panel / history / activity timeline | Tested locally | Right-side Order/Source/Answers/Calls/Follow-ups/History drawer reuses existing APIs; main browser checks passed. See all-leads-ui.md |
 | 5 Saving/success/error indicators | Tested locally | Existing row and request state messages |
 | 6 Standard timestamp/name/mobile, optional dynamic fields | Tested locally | Server timestamp and validation, JSONB answers; original values preserved |
 | 6 Unknown field registration and source association | Tested locally | Dynamic-field and ingestion tests, prior main-backend evidence |
 | 6 Column selector and retaining older questions | Tested locally | Scoped source/version quiz definitions and saved views |
-| 6 Admin default-column configuration | Pending | Per-user quiz selection exists; no complete Admin default-column UI |
+| 6 Admin default-column configuration | Tested locally | Organization fixed/answer-column defaults; personal browser layout/reset |
 | 6 Unlimited dynamic fields | Pending | Deliberately bounded to 30 fields per submission with size/depth limits; not unlimited |
 | 6 Source/version identity and comparisons | Tested locally | Catalog versions and scoped query/report models |
 | 7 Any caller selects lead; actual authenticated caller | Tested locally | Explicit Log Call and authenticated immutable caller history |
@@ -54,7 +56,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 7 Calling Now warning, expiry, independent sessions | Tested locally | Existing presence tests and prior two-session integration |
 | 8 Initial New/Confirm/CNP/Retry/Cancel | Tested locally | Seeded statuses and reporting categories; no seed changes in this task |
 | 8 Follow up Pending/Future/Not Interested/Invalid Number status options | Pending | Not all PDF labels are seeded; callback state is separate from current lead status |
-| 8 Admin add/rename/colors/reorder/disable/category mapping UI | Pending | Database configuration exists partially; full status management UI absent |
+| 8 Admin add/rename/colors/reorder/disable/category mapping UI | Tested locally | Audited revisioned Admin UI; system and used categories protected for counting |
 | 8 Legacy Status/Status 2/callers/reasons retained | Tested locally | Import mapping preserves legacy values without invented attempts |
 | 9 Current/first/latest confirmation identity/time and status history | Tested locally | Confirmation event SQL, prior call verification |
 | 9 No duplicate confirmations on repeated Confirm save | Tested locally | Revision/idempotency checks; prior cancel/reconfirm tests |
@@ -64,10 +66,10 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 10 Pending/overdue/CNP/Retry/Cancel and first/last activity | Tested locally | Existing callback/outcome/staff performance reports; prior evidence |
 | 10 Caller table and daily confirmation activity | Tested locally | Existing report with separate first/reconfirmation counts |
 | 10 Today/yesterday/7 days/custom periods | Tested locally | Performance filters; current preset includes last 30 days |
-| 10 This-month/caller/status filter parity | Pending | No dedicated this-month preset; actor breakdown exists; full PDF filter parity absent |
+| 10 This-month/caller/status filter parity | Tested locally | IST month preset, current-status filter and explicit caller event scope |
 | 10 Brand/product/landing page filters | Tested locally | Frozen catalog snapshot filters |
 | 11 Operational KPI cards and daily trend / leaderboard / status outcomes | Tested locally | Existing management performance tables and cards |
-| 11 Hourly arrivals, all charts, reason analytics and dashboard-wide caller/status filters | Pending | Full requested dashboard set is not present |
+| 11 Hourly arrivals, all charts, reason analytics and dashboard-wide caller/status filters | Tested locally / Pending | Eight charts, hourly arrivals, supplied reasons, leaderboard and caller/status filters; connected quality, trusted OTP and reliable live budget metrics pending |
 | 11 Product/page/creative comparisons | Tested locally | Separate performance/attribution modules; not one complete dashboard |
 | 11 UTC storage and Asia/Kolkata reporting | Tested locally | Existing timestamp rules and boundary tests |
 | 12 Preserve campaign/ad-set/ad/creative/account/placement/click/UTM claims | Tested locally | Dynamic original answers; explicit claims now visible by default when supplied |
@@ -90,7 +92,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 16 Configurable repeat policy | Pending | Current behavior preserves repeat inquiries; no full policy UI |
 | 17 Organization/brand/product/page/version hierarchy and reporting | Tested locally | Catalog and scoped report tests; optional unknown mapping retained |
 | 18 Admin/Manager/Telecaller/Analyst backend role boundaries | Tested locally | Existing RLS/API tests; analysts denied raw customer PII |
-| 18 Full Admin export/status/default-field controls | Pending | Roles exist but these product surfaces are incomplete |
+| 18 Full Admin export/status/default-field controls | Tested locally / Pending | Admin status/default fixed/answer columns and bounded CSV export; native XLSX pending |
 | 19 Follow-up dates/notes, optional caller, due today, overdue/count/history | Tested locally | Existing follow-up module and prior main integration |
 | 20 Relational records plus JSONB, raw payload, internal/external IDs | Tested locally | Migrations and submitted-order projection tests |
 | 20 Constraints/indexes/append-only history/protected fields/migrations | Tested locally | Existing SQL tests; no schema change required here |

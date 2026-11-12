@@ -14,6 +14,7 @@ export function crmNavigation(role:Role):{label:string;items:NavigationItem[]}[]
    {href:'/app/catalog',label:'Products & brands',icon:'catalog'},
    {href:'/app/imports',label:'Imports',icon:'import'},
    {href:'/app/meta',label:'Meta settings',icon:'settings'},
+   {href:'/app/settings',label:'Workspace settings',icon:'settings'},
   ]:[]},
  ].filter(group=>group.items.length);
 }

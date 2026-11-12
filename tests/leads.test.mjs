@@ -59,7 +59,7 @@ test('lead RPCs enforce real SQL tenant/role policy, audit, field registration a
         assert.equal((await db.query('select * from public.leads')).rows.length, 0);
         assert.equal((await db.query('select * from public.lead_history_editors($1,$2::uuid[])', [row.id, [users[1]]])).rows.length, 0);
         await assert.rejects(db.query('select public.update_lead($1,$2,$3::jsonb)', [row.id, 2, JSON.stringify(changed)]), /Lead unavailable/);
-        await asUser(0); await assert.rejects(db.query("update public.lead_statuses set label='Confirm' where is_new"), /check constraint/);
+        await asUser(0); await assert.rejects(db.query("update public.lead_statuses set label='Confirm' where is_new"), /permission denied/);
         await db.query('reset role'); await db.query('set role anon'); await assert.rejects(db.query('select * from public.leads'), /permission denied/);
     } finally { await engine.close(); }
 });
