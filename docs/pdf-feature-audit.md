@@ -125,3 +125,5 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 30 Which creative merits budget increase | Pending | Requires reliable captured attribution, real spend and advisory review; no automatic action |
 
 Current-task evidence and developer/live acceptance instructions are in [core-workflow-pilot.md](core-workflow-pilot.md). The subsequent direct HTTP API review, reusable Sir demo, actual responses and form-encoded verification are in [public-lead-api.md](public-lead-api.md). Earlier unchanged feature evidence is in `docs/live-acceptance-through-step-9.md`, Step 10–12 status records and corresponding tests. No broad historic test rerun is implied by this audit.
+
+The simpler daily calling view is **tested locally**, documented in [simple-calling-workflow.md](simple-calling-workflow.md). It reuses the existing lead search, calls and follow-up APIs. Browser saves were intercepted; no test call or new lead was persisted. This does not change the pending live website/real Sheet acceptance status.

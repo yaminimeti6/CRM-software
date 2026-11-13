@@ -35,7 +35,7 @@ try{
    stage=theme+' '+item.href;
    const apiReady=page.waitForResponse(r=>new URL(r.url()).pathname===expectedApi[item.href]&&r.request().resourceType()==='fetch'&&(item.href!=='/app/follow-ups'||new URL(r.url()).searchParams.has('view')),{timeout:30000});
    // Follow a real sidebar link; All Leads is narrowed afterward for screenshot privacy.
-   if(item.href==='/app')await page.goto(base+'/app?q='+encodeURIComponent(example.name));else await page.locator('.crm-sidebar').getByRole('link',{name:item.label,exact:true}).click();
+   if(item.href==='/app')await page.goto(base+'/app?q='+encodeURIComponent(example.name));else {const link=page.locator('.crm-sidebar').getByRole('link',{name:item.label,exact:true});if(!await link.isVisible()){const group=crmNavigation('admin').find(g=>g.items.some(i=>i.href===item.href));await page.locator('.crm-sidebar').getByText(group.label,{exact:true}).click();}await link.click();}
    const api=await apiReady;assert.equal(api.status(),200,'Read API failed for '+item.href);
    await page.waitForFunction(expected=>document.querySelector('.crm-shell')?.getAttribute('data-crm-theme')===expected,theme);
    assert.equal(await page.locator('.crm-shell').count(),1);assert.equal(await page.locator('.app-header').count(),0);

@@ -23,7 +23,7 @@ try{
  mkdirSync(root,{recursive:true});
  const example=(await db.query('select l.id,l.name from public.leads l join public.lead_ingestion i on i.lead_id=l.id where i.submission_id=$1',['6875bfac-874e-4784-ab30-41807442951d'])).rows[0];assert(example,'Existing retained lead required; no fixture creation.');
  await page.route('**/*',route=>{const r=route.request(),u=new URL(r.url());if(u.origin===base&&['POST','PATCH','PUT','DELETE'].includes(r.method())&&r.url().includes('/api/')&&u.pathname!=='/api/leads/search'){writes.push(u.pathname);return route.abort();}return route.continue();});
- stage='daily queues';await page.goto(base+'/app?q='+encodeURIComponent(example.name));
+ stage='daily queues';await page.goto(base+'/app?q='+encodeURIComponent(example.name));await page.getByRole('button',{name:'More tools',exact:true}).click();
  const queue=page.getByRole('navigation',{name:'Daily calling workflow'});await queue.getByRole('button',{name:'New leads',exact:true}).waitFor();
  await page.waitForFunction(()=>!document.querySelector('.daily-lead-buttons button')?.disabled);
  async function choose(label){const sent=page.waitForRequest(r=>{if(new URL(r.url()).pathname!=='/api/leads/search'||r.method()!=='POST')return false;const d=r.postDataJSON().definition;return d.q===''&&(label==='New leads'?d.statuses.length>0:label==='Pending callbacks'?d.callbacks==='pending':d.callbacks==='any'&&d.statuses.length===0);});await queue.getByRole('button',{name:label,exact:true}).click();const req=await sent;const response=await req.response();assert.equal(response.status(),200);await page.waitForFunction(()=>!document.querySelector('.daily-lead-buttons button')?.disabled);return req.postDataJSON().definition;}
