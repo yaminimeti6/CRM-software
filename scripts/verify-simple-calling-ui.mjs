@@ -37,7 +37,13 @@ try{
  });
 
  stage='simple default';
+ const searchReply=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/leads/search'&&r.request().method()==='POST');
  await page.goto(base+'/app?q='+encodeURIComponent(lead.name));
+ const saved=(await (await searchReply).json()).leads.find(l=>l.id===lead.id);assert(saved?.work_summary,'Read-only activity enrichment must load');
+ const last=(await db.query('select attempted_at,outcome_label,notes from public.call_attempts where lead_id=$1 order by attempted_at desc,id desc limit 1',[lead.id])).rows[0]??null;
+ const next=(await db.query("select due_at,notes from public.follow_ups where lead_id=$1 and state='pending' order by due_at,id limit 1",[lead.id])).rows[0]??null;
+ assert.equal(saved.work_summary.last_call?.attempted_at?new Date(saved.work_summary.last_call.attempted_at).toISOString():null,last?.attempted_at.toISOString()??null);
+ assert.equal(saved.work_summary.next_follow_up?.due_at?new Date(saved.work_summary.next_follow_up.due_at).toISOString():null,next?.due_at.toISOString()??null);
  const card=page.locator('tr[data-lead-id="'+lead.id+'"]');await card.waitFor();
  assert.equal(await page.locator('.leads-workspace').getAttribute('data-calling-view'),'simple');
  assert.equal(await page.getByLabel('Scrollable leads table',{exact:true}).isVisible(),true);
@@ -51,6 +57,9 @@ try{
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:root+'/'+theme.toLowerCase()+'.png',mask});
  }
+ stage='reachable row call action';
+ await card.getByRole('button',{name:'Record call',exact:true}).click();assert.equal(await page.getByRole('dialog').getByRole('tab',{name:'Calls',exact:true}).getAttribute('aria-selected'),'true');await page.getByRole('button',{name:'Close lead details',exact:true}).click();
+ const box=await card.boundingBox();assert(box.y+box.height<780,'First row must be visible without page scrolling');
  stage='inline status without Edit row';
  const statusSelect=card.getByLabel('Status for '+lead.name,{exact:true});assert(await statusSelect.isVisible());
  const nextStatus=await statusSelect.locator('option').evaluateAll(options=>options.map(o=>o.value));const alternative=nextStatus.find(id=>id!==lead.status_id);assert(alternative,'An existing second status is needed; do not create one.');
@@ -62,7 +71,7 @@ try{
  await drawer.getByRole('button',{name:'More details & history',exact:true}).click();assert.equal(await drawer.getByRole('tab').count(),6);
  await drawer.getByRole('tab',{name:'Source',exact:true}).click();await drawer.getByRole('button',{name:'Hide extra details',exact:true}).click();
  assert.equal(await drawer.getByRole('tab',{name:'Order',exact:true}).getAttribute('aria-selected'),'true');
- await drawer.getByRole('button',{name:'Save call result',exact:true}).click();
+ await drawer.getByRole('button',{name:'Record call',exact:true}).click();
  const call=drawer.getByRole('region',{name:'Lead calls'});
  const outcome=drawer.getByLabel('Call outcome',{exact:true});await outcome.waitFor();
  await page.waitForFunction(()=>!document.querySelector('.call-panel form button')?.disabled);
@@ -74,7 +83,7 @@ try{
  assert.equal(await drawer.getByLabel('Call notes (optional)',{exact:true}).inputValue(),'Intercepted browser verification; never sent to server.');
  await page.screenshot({path:root+'/call-form.png',mask});
  stage='same request retry without business writes';
- await drawer.getByRole('button',{name:'Save call result',exact:true}).click();
+ await drawer.getByRole('button',{name:'Record call',exact:true}).click();
  await drawer.getByRole('button',{name:'Retry saving',exact:true}).waitFor();
  assert.equal(callRequests.length,1);assert(callRequests[0].follow_up);
  await drawer.getByRole('button',{name:'Retry saving',exact:true}).click();
@@ -88,13 +97,13 @@ try{
  await page.getByRole('button',{name:'Close lead details',exact:true}).click();await drawer.waitFor({state:'hidden'});
  stage='real server new queue';
  const sent=page.waitForRequest(r=>new URL(r.url()).pathname==='/api/leads/search'&&r.method()==='POST'&&r.postDataJSON().definition.statuses.length>0);
- await page.getByRole('button',{name:'New inquiries',exact:true}).click();const request=await sent;assert.equal((await request.response()).status(),200);assert(request.postDataJSON().definition.statuses.length>0);
+ await page.getByRole('button',{name:'New leads',exact:true}).click();const request=await sent;assert.equal((await request.response()).status(),200);assert(request.postDataJSON().definition.statuses.length>0);
  await page.getByRole('navigation',{name:'Choose your calling work'}).getByRole('link',{name:"Today's follow-ups",exact:true}).click();await page.waitForURL('**/app/follow-ups?view=due_today');
  assert.equal(await page.getByLabel('Follow-up filter',{exact:true}).inputValue(),'due_today');
  stage='mobile';await page.goto(base+'/app?q='+encodeURIComponent(lead.name));await card.waitFor();await page.setViewportSize({width:390,height:844});
  await page.waitForFunction(()=>{const s=document.querySelector('.crm-sidebar');return s?.inert&&s.getBoundingClientRect().right<=1&&document.documentElement.scrollWidth<=innerWidth;});await page.screenshot({path:root+'/mobile.png',mask:[page.locator('.crm-profile-label')]});
  assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);assert.deepEqual(errors,[]);
- writeFileSync(root+'/evidence.json',JSON.stringify({base,simple_default:true,inline_status_dropdown:true,intercepted_stale_status_rollback:true,themes:['light','dark','mixed'],mobile_no_overflow:true,server_new_queue:true,today_followups:true,draft_retained:true,uncertain_retry_same_payload:callRequests.length,call_and_followup_writes:'intercepted, not persisted',all_public_records_and_passwords_unchanged:true,new_leads:0,new_users:0,live_website_integration:'pending'},null,2));
+ writeFileSync(root+'/evidence.json',JSON.stringify({base,simple_default:true,inline_status_dropdown:true,activity_summary_matches_existing_database:true,reachable_row_call_action:true,first_row_visible:true,intercepted_stale_status_rollback:true,themes:['light','dark','mixed'],mobile_no_overflow:true,server_new_queue:true,today_followups:true,draft_retained:true,uncertain_retry_same_payload:callRequests.length,call_and_followup_writes:'intercepted, not persisted',all_public_records_and_passwords_unchanged:true,new_leads:0,new_users:0,live_website_integration:'pending'},null,2));
  console.log('PASS: inline Status without Edit row; intercepted versioned save/stale rollback; simple default; three themes; mobile; real server New filter; today follow-ups; details; call/follow-up draft; intercepted stable retry; all public data/passwords unchanged.');
 }catch(e){console.error('Stage: '+stage);console.error(String(e.message).split('\n').slice(0,8).join('\n'));process.exitCode=1;}
 finally{await browser?.close();if(auth)await auth.auth.signOut({scope:'local'});await db?.end();}

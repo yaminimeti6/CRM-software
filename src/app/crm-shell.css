@@ -304,3 +304,26 @@ main:has(> .crm-shell) { max-width: none; width: 100%; min-width: 0; margin: 0; 
 .crm-shell .drawer-more-details { margin:10px 24px 0;align-self:start; }
 .crm-shell .crm-nav-folder>summary { cursor:pointer;font-size:12px;padding:10px 14px;text-transform:none; }
 @media(max-width:700px){ .crm-shell .inquiry-main { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }.crm-shell .inquiry-actions { grid-column:1/-1;display:flex;flex-wrap:wrap; }.crm-shell .simple-search>label { flex-basis:100%; }.crm-shell .inquiry-source time { margin-left:0; }.crm-shell .calling-steps { gap:8px; }.crm-shell .calling-steps li { font-size:13px; } }
+
+/* One table-led workspace; actions stay reachable while scanning wide rows. */
+.crm-shell .leads-workspace .leads-heading { margin-bottom:10px; }
+.crm-shell .leads-workspace .leads-heading h1 { font-size:22px; margin:0; }
+.crm-shell .simple-calling-actions { margin:8px 0 12px; gap:8px; }
+.crm-shell .simple-calling-actions button,.crm-shell .simple-calling-actions a { padding:8px 12px; }
+.crm-shell .simple-search { padding:10px 12px; gap:10px; margin-bottom:12px; }
+.crm-shell .simple-search input,.crm-shell .simple-search select { padding:8px 10px; }
+.crm-shell .simple-search label:first-child { flex:0 1 460px; }
+.crm-shell .compact-leads-table td { padding:10px 12px; }
+.crm-shell .compact-leads-table .lead-row-actions { position:sticky;right:0;z-index:2;box-shadow:-3px 0 5px #15283c0a; }
+.crm-shell .compact-leads-table th:last-child { position:sticky;right:0;z-index:4; }
+.crm-shell .compact-leads-table .lead-row-actions .row-call-action { font-size:14px;padding:7px 10px;display:inline-block;margin-right:8px; }
+.crm-shell .compact-leads-table .work-last-call,.crm-shell .compact-leads-table .work-next-follow-up { font-size:13px;white-space:normal;line-height:1.4;margin:6px 0; }
+.crm-shell .compact-leads-table .follow-up-date { padding:0;border:0;background:transparent;color:var(--crm-accent);font-size:13px;text-align:left;text-decoration:underline; }
+.crm-shell .compact-leads-table .lead-row-actions button[aria-label^="Edit row"] { padding:0;background:transparent;color:var(--crm-muted);border:0;font-size:13px; }
+.crm-shell .follow-up-workspace h2 { font-size:22px;margin:0 0 10px; }
+.crm-shell .follow-up-workspace .filters { padding:12px;background:var(--crm-soft);border:1px solid var(--crm-border);border-radius:8px;gap:12px;align-items:end;margin:14px 0; }
+.crm-shell .follow-up-workspace .filters label { margin:0; }
+@media(max-width:700px){
+ .crm-shell .compact-leads-table .lead-row-actions,.crm-shell .compact-leads-table th:last-child { position:static;box-shadow:none; }
+ .crm-shell .simple-search label:first-child { flex-basis:100%;min-width:0; }
+}
