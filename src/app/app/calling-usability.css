@@ -1,0 +1,22 @@
+/* Keep the explicit save action reachable while completing a long call form. */
+.crm-shell .lead-drawer .call-save-action {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding: 12px 0;
+  background: var(--crm-soft);
+  border-top: 1px solid var(--crm-border);
+}
+.crm-shell .lead-drawer .call-save-action button {
+  width: 100%;
+  min-height: 42px;
+}
+.crm-shell .compact-leads-table .mobile-lead-call { display: none; }
+@media (max-width: 700px) {
+  .crm-shell .compact-leads-table .mobile-lead-call {
+    display: block;
+    margin-top: 8px;
+    padding: 7px 10px;
+    font-size: 14px;
+  }
+}
