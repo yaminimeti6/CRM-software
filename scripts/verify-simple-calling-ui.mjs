@@ -38,11 +38,11 @@ try{
 
  stage='simple default';
  await page.goto(base+'/app?q='+encodeURIComponent(lead.name));
- const card=page.locator('[data-inquiry-id="'+lead.id+'"]');await card.waitFor();
+ const card=page.locator('tr[data-lead-id="'+lead.id+'"]');await card.waitFor();
  assert.equal(await page.locator('.leads-workspace').getAttribute('data-calling-view'),'simple');
- assert.equal(await page.getByLabel('Scrollable leads table',{exact:true}).isVisible(),false);
+ assert.equal(await page.getByLabel('Scrollable leads table',{exact:true}).isVisible(),true);
  assert.equal(await page.getByRole('button',{name:'Apply filters',exact:true}).isVisible(),false);
- assert.match(await card.innerText(),/Website:/);assert.match(await card.innerText(),/Landing page:/);assert.match(await card.innerText(),/Traffic source:/);
+ assert.equal(await page.locator('.inquiry-card').count(),0);assert(await card.locator('.freeze-name').isVisible());assert(await card.locator('.freeze-mobile').isVisible());
  mkdirSync(root,{recursive:true});
  const mask=[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')];
  for(const theme of ['Light','Dark','Mixed']){
@@ -51,7 +51,7 @@ try{
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:root+'/'+theme.toLowerCase()+'.png',mask});
  }
- stage='simple order and details';await card.getByRole('button',{name:'Open order',exact:true}).click();
+ stage='simple order and details';await card.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();
  const drawer=page.getByRole('dialog',{name:lead.name,exact:true});await drawer.waitFor();
  assert.equal(await drawer.getByRole('tab').count(),4);
  await drawer.getByRole('button',{name:'More details & history',exact:true}).click();assert.equal(await drawer.getByRole('tab').count(),6);

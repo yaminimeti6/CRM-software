@@ -2,7 +2,7 @@
 
 ## Staff workflow
 
-1. Open `/app`. The default **Simple calling view** shows inquiries with name, phone, address, course, price and status. Website, configured landing page and reported traffic source remain separate; missing values show Unknown.
+1. Open `/app`. The default **Simple calling view** uses the existing table: one inquiry per row, with frozen Name/Mobile and the configured columns. Cards have been removed from this view at the owner's request. Website/landing page and reported traffic source remain separate; missing values show Unknown. Additional order details remain in the side panel.
 2. Choose **New inquiries**, **Today's follow-ups**, **Overdue follow-ups**, or **All inquiries**. Search by name, mobile or reference and optionally choose an order status.
 3. Select **Open order** to read the order and submitted answers. Call with your phone; opening an order does not place or count a call.
 4. After an actual attempt, select **Save call result**, deliberately choose the result and optionally add notes. Select **Call again later** to save the next call date with the same call request.
@@ -12,7 +12,7 @@
 
 ## More tools
 
-The original compact table, frozen Name/Mobile columns, advanced server filters, saved views, manual entry, column settings and authorized exports remain under **More tools**. The choice is saved for the current browser/account. Saved-view links open the advanced view. Additional filters are explicitly flagged in the simple view and can be reviewed or cleared.
+The compact table and frozen Name/Mobile columns are always visible. Advanced server filters, saved views, manual entry, column settings and authorized exports remain under **More tools**. The choice is saved for the current browser/account. Saved-view links open the advanced controls. Additional filters are explicitly flagged in the simple view and can be reviewed or cleared.
 
 The default detail tabs are Order, Calls, Follow-ups and Answers. **More details & history** reveals Source and History; order references are expandable. Original dynamic website answers are retained. Reports and Admin/Settings are expandable sidebar folders; existing role restrictions and Admin/Invite Staff functionality remain intact.
 
