@@ -51,6 +51,11 @@ try{
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:root+'/'+theme.toLowerCase()+'.png',mask});
  }
+ stage='inline status without Edit row';
+ const statusSelect=card.getByLabel('Status for '+lead.name,{exact:true});assert(await statusSelect.isVisible());
+ const nextStatus=await statusSelect.locator('option').evaluateAll(options=>options.map(o=>o.value));const alternative=nextStatus.find(id=>id!==lead.status_id);assert(alternative,'An existing second status is needed; do not create one.');
+ await statusSelect.selectOption(alternative);await card.getByText('Browser-only intercepted stale edit. Reload latest before saving.',{exact:true}).first().waitFor();
+ assert.equal(patches.length,1);assert.equal(patches[0].status_id,alternative);assert.equal(await statusSelect.inputValue(),lead.status_id);assert(Number.isSafeInteger(patches[0].version));
  stage='simple order and details';await card.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();
  const drawer=page.getByRole('dialog',{name:lead.name,exact:true});await drawer.waitFor();
  assert.equal(await drawer.getByRole('tab').count(),4);
@@ -89,7 +94,7 @@ try{
  stage='mobile';await page.goto(base+'/app?q='+encodeURIComponent(lead.name));await card.waitFor();await page.setViewportSize({width:390,height:844});
  await page.waitForFunction(()=>{const s=document.querySelector('.crm-sidebar');return s?.inert&&s.getBoundingClientRect().right<=1&&document.documentElement.scrollWidth<=innerWidth;});await page.screenshot({path:root+'/mobile.png',mask:[page.locator('.crm-profile-label')]});
  assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);assert.deepEqual(errors,[]);
- writeFileSync(root+'/evidence.json',JSON.stringify({base,simple_default:true,themes:['light','dark','mixed'],mobile_no_overflow:true,server_new_queue:true,today_followups:true,draft_retained:true,uncertain_retry_same_payload:callRequests.length,call_and_followup_writes:'intercepted, not persisted',all_public_records_and_passwords_unchanged:true,new_leads:0,new_users:0,live_website_integration:'pending'},null,2));
- console.log('PASS: simple default; three themes; mobile; real server New filter; today follow-ups; details; call/follow-up draft; intercepted stable retry; all public data/passwords unchanged.');
+ writeFileSync(root+'/evidence.json',JSON.stringify({base,simple_default:true,inline_status_dropdown:true,intercepted_stale_status_rollback:true,themes:['light','dark','mixed'],mobile_no_overflow:true,server_new_queue:true,today_followups:true,draft_retained:true,uncertain_retry_same_payload:callRequests.length,call_and_followup_writes:'intercepted, not persisted',all_public_records_and_passwords_unchanged:true,new_leads:0,new_users:0,live_website_integration:'pending'},null,2));
+ console.log('PASS: inline Status without Edit row; intercepted versioned save/stale rollback; simple default; three themes; mobile; real server New filter; today follow-ups; details; call/follow-up draft; intercepted stable retry; all public data/passwords unchanged.');
 }catch(e){console.error('Stage: '+stage);console.error(String(e.message).split('\n').slice(0,8).join('\n'));process.exitCode=1;}
 finally{await browser?.close();if(auth)await auth.auth.signOut({scope:'local'});await db?.end();}

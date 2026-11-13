@@ -8,6 +8,8 @@
 4. After an actual attempt, select **Save call result**, deliberately choose the result and optionally add notes. Select **Call again later** to save the next call date with the same call request.
 5. If saving is uncertain, use **Retry saving**. It retains the original request ID and payload. Check **Previous calls & confirmation history** and refresh it before deliberately starting another attempt.
 
+The Status dropdown is always visible in each table row, including outside **Edit row**. Choosing another status saves through the existing version-checked lead update API. While saving, the dropdown is disabled; a failed/stale save restores the previous displayed status and shows the error. In Edit row mode, the chosen status remains part of the draft until Save row. Changing status directly does not record a call attempt. Existing confirmation-transition rules still apply.
+
 **Schedule follow-up** also remains available without recording a call. Completing or cancelling a follow-up does not record an attempt. Existing confirmation and count rules remain unchanged.
 
 ## More tools
