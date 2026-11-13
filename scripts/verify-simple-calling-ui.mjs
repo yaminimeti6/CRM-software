@@ -58,7 +58,7 @@ try{
   await page.screenshot({path:root+'/'+theme.toLowerCase()+'.png',mask});
  }
  stage='reachable row call action';
- await card.getByRole('button',{name:'Record call',exact:true}).click();assert.equal(await page.getByRole('dialog').getByRole('tab',{name:'Calls',exact:true}).getAttribute('aria-selected'),'true');await page.getByRole('button',{name:'Close lead details',exact:true}).click();
+ await card.getByRole('button',{name:'Open call form',exact:true}).click();assert.equal(await page.getByRole('dialog').getByRole('tab',{name:'Calls',exact:true}).getAttribute('aria-selected'),'true');await page.getByRole('button',{name:'Close lead details',exact:true}).click();
  const box=await card.boundingBox();assert(box.y+box.height<780,'First row must be visible without page scrolling');
  stage='inline status without Edit row';
  const statusSelect=card.getByLabel('Status for '+lead.name,{exact:true});assert(await statusSelect.isVisible());
@@ -71,7 +71,7 @@ try{
  await drawer.getByRole('button',{name:'More details & history',exact:true}).click();assert.equal(await drawer.getByRole('tab').count(),6);
  await drawer.getByRole('tab',{name:'Source',exact:true}).click();await drawer.getByRole('button',{name:'Hide extra details',exact:true}).click();
  assert.equal(await drawer.getByRole('tab',{name:'Order',exact:true}).getAttribute('aria-selected'),'true');
- await drawer.getByRole('button',{name:'Record call',exact:true}).click();
+ await drawer.getByRole('button',{name:'Open call form',exact:true}).click();
  const call=drawer.getByRole('region',{name:'Lead calls'});
  const outcome=drawer.getByLabel('Call outcome',{exact:true});await outcome.waitFor();
  await page.waitForFunction(()=>!document.querySelector('.call-panel form button')?.disabled);
@@ -83,7 +83,7 @@ try{
  assert.equal(await drawer.getByLabel('Call notes (optional)',{exact:true}).inputValue(),'Intercepted browser verification; never sent to server.');
  await page.screenshot({path:root+'/call-form.png',mask});
  stage='same request retry without business writes';
- await drawer.getByRole('button',{name:'Record call',exact:true}).click();
+ await drawer.getByRole('button',{name:'Save call result',exact:true}).click();
  await drawer.getByRole('button',{name:'Retry saving',exact:true}).waitFor();
  assert.equal(callRequests.length,1);assert(callRequests[0].follow_up);
  await drawer.getByRole('button',{name:'Retry saving',exact:true}).click();

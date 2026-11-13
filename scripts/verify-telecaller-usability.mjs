@@ -58,7 +58,7 @@ try{
   await page.screenshot({path:root+'/'+theme.toLowerCase()+'.png',mask});
  }
  stage='reachable row call action';
- await card.getByRole('button',{name:'Record call',exact:true}).click();assert.equal(await page.getByRole('dialog').getByRole('tab',{name:'Calls',exact:true}).getAttribute('aria-selected'),'true');await page.getByRole('button',{name:'Close lead details',exact:true}).click();
+ await card.getByRole('button',{name:'Open call form',exact:true}).click();assert.equal(await page.getByRole('dialog').getByRole('tab',{name:'Calls',exact:true}).getAttribute('aria-selected'),'true');await page.getByRole('button',{name:'Close lead details',exact:true}).click();
  const box=await card.boundingBox();assert(box.y+box.height<780,'First row must be visible without page scrolling');
  stage='inline status without Edit row';
  const statusSelect=card.getByLabel('Status for '+lead.name,{exact:true});assert(await statusSelect.isVisible());
@@ -68,23 +68,27 @@ try{
  stage='simple order and details';await card.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();
  const drawer=page.getByRole('dialog',{name:lead.name,exact:true});await drawer.waitFor();
  assert.equal(await drawer.getByRole('tab').count(),4);
+ await drawer.getByRole('tab',{name:'Answers',exact:true}).click();const answers=drawer.getByRole('tabpanel',{name:'Answers',exact:true});
+ assert.match(await answers.innerText(),/Sir Demo Typed Answer/);assert(!(await answers.innerText()).includes('paid_social'));assert(!(await answers.innerText()).includes('{"choice"'));
+ await answers.getByText('Order & tracking fields',{exact:true}).click();assert((await answers.innerText()).includes('paid_social'));await answers.getByText('Order & tracking fields',{exact:true}).click();
+ await drawer.getByRole('tab',{name:'Order',exact:true}).click();
  await drawer.getByRole('button',{name:'More details & history',exact:true}).click();assert.equal(await drawer.getByRole('tab').count(),6);
  await drawer.getByRole('tab',{name:'Source',exact:true}).click();await drawer.getByRole('button',{name:'Hide extra details',exact:true}).click();
  assert.equal(await drawer.getByRole('tab',{name:'Order',exact:true}).getAttribute('aria-selected'),'true');
- await drawer.getByRole('button',{name:'Record call',exact:true}).click();
+ await drawer.getByRole('button',{name:'Open call form',exact:true}).click();
  const call=drawer.getByRole('region',{name:'Lead calls'});
  const outcome=drawer.getByLabel('Call outcome',{exact:true});await outcome.waitFor();
  await page.waitForFunction(()=>!document.querySelector('.call-panel form button')?.disabled);
- assert.equal(await outcome.inputValue(),'');await drawer.getByRole('button',{name:'Record call',exact:true}).click();assert.equal(callRequests.length,0);assert.equal(await outcome.evaluate(el=>el.validity.valueMissing),true);await outcome.selectOption(lead.status_id);
+ assert.equal(await outcome.inputValue(),'');await drawer.getByRole('button',{name:'Save call result',exact:true}).click();assert.equal(callRequests.length,0);assert.equal(await outcome.evaluate(el=>el.validity.valueMissing),true);await outcome.selectOption(lead.status_id);
  await drawer.getByLabel('Call notes (optional)',{exact:true}).fill('Intercepted browser verification; never sent to server.');
  await drawer.getByLabel('Call again later',{exact:true}).check();
  await drawer.locator('input[type="datetime-local"]').fill('2026-12-01T10:30');
  await drawer.getByRole('tab',{name:'Order',exact:true}).click();await drawer.getByRole('tab',{name:'Calls',exact:true}).click();
  assert.equal(await drawer.getByLabel('Call notes (optional)',{exact:true}).inputValue(),'Intercepted browser verification; never sent to server.');
- const actionBox=await drawer.getByRole('button',{name:'Record call',exact:true}).boundingBox();assert(actionBox.y>=0&&actionBox.y+actionBox.height<750,'Call action must remain above drawer footer');
+ await drawer.getByRole('button',{name:'Save call result',exact:true}).scrollIntoViewIfNeeded();const actionBox=await drawer.getByRole('button',{name:'Save call result',exact:true}).boundingBox();assert(actionBox.y>=0&&actionBox.y+actionBox.height<750,'Call action must remain above drawer footer');
  await page.screenshot({path:root+'/call-form.png',mask});
  stage='same request retry without business writes';
- await drawer.getByRole('button',{name:'Record call',exact:true}).click();
+ await drawer.getByRole('button',{name:'Save call result',exact:true}).click();
  await drawer.getByRole('button',{name:'Retry saving',exact:true}).waitFor();
  assert.equal(callRequests.length,1);assert(callRequests[0].follow_up);
  await drawer.getByRole('button',{name:'Retry saving',exact:true}).click();
@@ -97,13 +101,13 @@ try{
  page.removeAllListeners('dialog');page.on('dialog',d=>d.accept());
  await page.getByRole('button',{name:'Close lead details',exact:true}).click();await drawer.waitFor({state:'hidden'});
  stage='simulated successful call plus follow-up';
- simulateSuccess=true;await card.getByRole('button',{name:'Record call',exact:true}).click();
+ simulateSuccess=true;await card.getByRole('button',{name:'Open call form',exact:true}).click();
  const successDrawer=page.getByRole('dialog',{name:lead.name,exact:true});
  await successDrawer.getByLabel('Call outcome',{exact:true}).selectOption(alternative);
  await successDrawer.getByLabel('Call notes (optional)',{exact:true}).fill('Simulated usability check; not a real call.');
  await successDrawer.getByLabel('Call again later',{exact:true}).check();
  await successDrawer.locator('input[type="datetime-local"]').fill('2026-12-02T11:00');
- await successDrawer.getByRole('button',{name:'Record call',exact:true}).click();
+ await successDrawer.getByRole('button',{name:'Save call result',exact:true}).click();
  await successDrawer.getByRole('status').filter({hasText:'Call result saved. Next call date saved.'}).waitFor();
  await successDrawer.getByRole('button',{name:'Call recorded',exact:true}).waitFor();assert(await successDrawer.getByRole('button',{name:'Call recorded',exact:true}).isDisabled());
  assert(callRequests.at(-1).follow_up);assert.equal(callRequests.length,3);
@@ -117,10 +121,13 @@ try{
  stage='mobile';await page.goto(base+'/app?q='+encodeURIComponent(lead.name));await card.waitFor();await page.setViewportSize({width:390,height:844});
  await page.waitForFunction(()=>{const s=document.querySelector('.crm-sidebar');return s?.inert&&s.getBoundingClientRect().right<=1&&document.documentElement.scrollWidth<=innerWidth;});await page.screenshot({path:root+'/mobile.png',mask:[page.locator('.crm-profile-label')]});
  await card.locator('.mobile-lead-call').click();const mobileDrawer=page.getByRole('dialog',{name:lead.name,exact:true});await mobileDrawer.getByLabel('Call again later',{exact:true}).check();
- const mobileAction=mobileDrawer.getByRole('button',{name:'Record call',exact:true});const mobileBox=await mobileAction.boundingBox();assert(mobileBox.y>=0&&mobileBox.y+mobileBox.height<814,'Mobile save action must stay visible');
+ const date=mobileDrawer.locator('input[type="datetime-local"]');await date.fill('2026-12-03T10:30');await date.scrollIntoViewIfNeeded();
+ assert(await date.evaluate(el=>{const r=el.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===el;}),'Date must be reachable, not covered by save');
+ await page.screenshot({path:root+'/mobile-date-uncovered.png',mask:[page.locator('.crm-profile-label')]});
+ const mobileAction=mobileDrawer.getByRole('button',{name:'Save call result',exact:true});await mobileAction.scrollIntoViewIfNeeded();const mobileBox=await mobileAction.boundingBox();assert(mobileBox.y>=0&&mobileBox.y+mobileBox.height<814,'Mobile save action must stay visible');
  await page.screenshot({path:root+'/mobile-call-form.png',mask:[page.locator('.crm-profile-label')]});await page.getByRole('button',{name:'Close lead details',exact:true}).click();
  assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);assert.deepEqual(errors,[]);
- writeFileSync(root+'/evidence.json',JSON.stringify({base,required_result_checked:true,desktop_mobile_save_visible:true,mobile_row_call_accessible:true,success_button_label_verified:true,actor_role:owner.role,simulated_success_only:true,real_persisted_call_or_follow_up:false,simple_default:true,inline_status_dropdown:true,activity_summary_matches_existing_database:true,reachable_row_call_action:true,first_row_visible:true,intercepted_stale_status_rollback:true,themes:['light','dark','mixed'],mobile_no_overflow:true,server_new_queue:true,today_followups:true,draft_retained:true,uncertain_retry_same_payload:2,intercepted_total_call_requests:callRequests.length,call_and_followup_writes:'intercepted, not persisted',all_public_records_and_passwords_unchanged:true,new_leads:0,new_users:0,live_website_integration:'pending'},null,2));
+ writeFileSync(root+'/evidence.json',JSON.stringify({base,required_result_checked:true,desktop_mobile_save_reachable:true,mobile_date_uncovered:true,answers_grouped_without_loss:true,mobile_row_call_accessible:true,success_button_label_verified:true,actor_role:owner.role,simulated_success_only:true,real_persisted_call_or_follow_up:false,simple_default:true,inline_status_dropdown:true,activity_summary_matches_existing_database:true,reachable_row_call_action:true,first_row_visible:true,intercepted_stale_status_rollback:true,themes:['light','dark','mixed'],mobile_no_overflow:true,server_new_queue:true,today_followups:true,draft_retained:true,uncertain_retry_same_payload:2,intercepted_total_call_requests:callRequests.length,call_and_followup_writes:'intercepted, not persisted',all_public_records_and_passwords_unchanged:true,new_leads:0,new_users:0,live_website_integration:'pending'},null,2));
  console.log('PASS ('+owner.role+', local, simulated save only): inline Status without Edit row; intercepted versioned save/stale rollback; simple default; three themes; mobile; real server New filter; today follow-ups; details; call/follow-up draft; intercepted stable retry; all public data/passwords unchanged.');
 }catch(e){console.error('Stage: '+stage);console.error(String(e.message).split('\n').slice(0,8).join('\n'));process.exitCode=1;}
 finally{await browser?.close();if(auth)await auth.auth.signOut({scope:'local'});await db?.end();}
