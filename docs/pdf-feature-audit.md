@@ -1,14 +1,16 @@
-# CRM PDF feature audit — 2026-11-05
+# CRM PDF feature audit - reviewed 2026-11-16
 
-Local feature update (2026-11-12): Admin status/default-column settings, ID search, CSV export, personal column controls and dashboard charts are implemented locally. Subsequent native XLSX and scoped 77-table local recovery checks passed. Customer OTP is optional for the pilot. Temporary HTTPS sign-in/anonymous denial passed; authenticated public and production recovery checks remain pending. See [native-recovery-and-xlsx.md](native-recovery-and-xlsx.md). See [workspace-completion-local.md](workspace-completion-local.md).
+Current pending review: every one of the 28 previously Pending/mixed entries is mapped in [pdf-pending-review.md](pdf-pending-review.md), with exact gaps, dispositions and evidence. Export/Admin controls had stale Pending labels; charts and several mixed items are now split by implemented versus unverified scope. Seventeen targeted tests passed in this review. No application/data/configuration change or new roadmap step.
 
-UI rollout update (2026-11-06): all ten authenticated CRM pages now share the sidebar/top bar and three persisted themes; sign-in/invitation screens use the same theme frame. Cross-page browser checks passed locally. See [ui-theme-rollout.md](ui-theme-rollout.md). This does not change any live integration status or authorize another backend roadmap step.
+Historical delivery update (2026-11-12): Admin status/default-column settings, ID search, CSV export, personal column controls and dashboard charts are implemented locally. Subsequent native XLSX and scoped 77-table local recovery checks passed. Customer OTP is optional for the pilot. Temporary HTTPS sign-in/anonymous denial passed; authenticated public and production recovery checks remain pending. See [native-recovery-and-xlsx.md](native-recovery-and-xlsx.md). See [workspace-completion-local.md](workspace-completion-local.md).
 
-Source: supplied `Crm.Pdf`, version 1.0, 26 pages, sections 1–30, read in full for this review. The numbered development roadmap is paused. This audit does not authorize implementation of pending features.
+Historical UI update (2026-11-06): all ten authenticated CRM pages now share the sidebar/top bar and three persisted themes; sign-in/invitation screens use the same theme frame. Cross-page browser checks passed locally. See [ui-theme-rollout.md](ui-theme-rollout.md). This does not change any live integration status or authorize another backend roadmap step.
 
-Read-only live review update: current /Wife/ HTML is an advertorial leading to a separate storefront, not the supplied ZIP form. The actual order/Sheet collector is unverified and live integration remains pending. See [developer handoff and exact blockers](live-wife-developer-handoff.md). No public page, checkout, hosting or deployment was changed.
+Source mapping retained from the earlier full review of supplied Crm.Pdf (version 1.0, 26 pages, sections 1-30). The original PDF was not found for this re-review; this is not a fresh page-by-page validation. The numbered roadmap stays paused.
 
-Status meanings: **Tested locally** = repository implementation with automated/local-browser evidence, sometimes using the existing managed Supabase backend; this is not public production acceptance. **Pending** = absent, partial, not verified, or requires real provider/deployment access. **Working live** requires observed behavior on the authorized public CRM/page/provider; no item is assigned that status because no public CRM deployment exists. Earlier documents' term “live” often means localhost with real development Supabase; that evidence is classified here as tested locally. Prior checks are identified separately from checks rerun in this task.
+Prior website observation (2026-11-05, not repeated here): /Wife/ was an advertorial leading to another storefront, not the ZIP order form. Actual live collector/Sheet acceptance remains unverified. See [developer handoff](live-wife-developer-handoff.md).
+
+Status meanings: **Tested locally** means repository implementation with specified local evidence; it is not production acceptance. **Pending** includes missing/partial work, external verification, owner decisions, optional/deferred items and explicit exclusions. **Working live** requires observed authorized public feature behavior. No item is newly promoted to Working live. Temporary tunnel sign-in/theme reports are not live order/Sheet or production-recovery acceptance.
 
 ## Feature-by-feature inventory
 
@@ -26,11 +28,13 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 4 Creative analytics / follow-ups / sources / products and brands | Tested locally | Existing attribution, callback, ingestion and catalog modules |
 | 4 Date/status/product reporting | Tested locally | Existing performance, attribution and lead filters |
 | 4 Team management | Tested locally | Existing invitation/role evidence; Admin and Invite Staff unchanged |
-| 4 Unified Settings (statuses, mappings, imports, integrations) | Pending | Imports/mappings/integrations exist in separate modules; full status settings UI absent |
+| 4 Admin status/default-column settings | Tested locally | Implemented in /app/settings with role/revision protection; fresh workspace-settings tests passed |
+| 4 One consolidated settings page for mappings/imports/integrations | Pending | Existing modules are grouped under Admin/Settings; literal single-page consolidation is not implemented. See P01 in pdf-pending-review.md |
 | 5 Large editable table, scrolling and sticky headers | Tested locally | Main table and stylesheet; existing browser evidence |
-| 5 Freeze Timestamp, Name and Mobile | Pending | Name/Mobile freezing now browser-tested locally; timestamp is visible but not frozen in this requested slice |
-| 5 Inline customer details and dropdown status | Tested locally | Explicit Edit row opens existing versioned editors; compact default read mode and stale-edit preservation verified |
-| 5 Automatic saving | Pending | Explicit Save row is current behavior |
+| 5 Freeze Timestamp, Name and Mobile | Pending | Name/Mobile are frozen. Received is compact IST with a full tooltip, not frozen; this matches the later requested compact layout. Timestamp parity is an owner layout decision (P02) |
+| 5 Inline customer details and dropdown status | Tested locally | Direct row Status saves with a version check; ellipsis menu opens explicit customer/answer editing. Existing browser/stale-edit evidence |
+| 5 Automatic status saving | Tested locally | Changing row Status saves immediately through the existing version-checked API; it does not record a call |
+| 5 Automatic customer/answer-field saving | Pending | Other edits use Save row; no full-field autosave. See P03 |
 | 5 Real-time updates across users | Tested locally | Prior Step 9 Realtime two-session evidence; fallback authoritative reload |
 | 5 Search name/mobile | Tested locally | Server search; current main synthetic search |
 | 5 Search Lead ID / Creative ID | Tested locally | Server literal Lead/submission/order/reported Creative ID search within existing tenant/filter scope |
@@ -38,7 +42,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 5 Column resizing / reordering | Tested locally | Personal width controls and accessible move-left/right ordering; frozen identities preserved |
 | 5 Hide/show columns | Tested locally | Personal fixed/answer column visibility; Name/Mobile/Actions remain mandatory |
 | 5 Saved custom views | Tested locally | Private filter/sort/quiz-column/page-size views; no arbitrary column layout |
-| 5 Permission-controlled CSV/Excel export | Tested locally / Pending | Admin-only filtered CSV and native XLSX, text/formula-safe and audited |
+| 5 Permission-controlled CSV/Excel export | Tested locally | Admin-only filtered CSV and native XLSX are implemented, text/formula-safe and audited; export/XLSX tests revalidated in this review |
 | 5 Lead detail panel / history / activity timeline | Tested locally | Right-side Order/Source/Answers/Calls/Follow-ups/History drawer reuses existing APIs; main browser checks passed. See all-leads-ui.md |
 | 5 Saving/success/error indicators | Tested locally | Existing row and request state messages |
 | 6 Standard timestamp/name/mobile, optional dynamic fields | Tested locally | Server timestamp and validation, JSONB answers; original values preserved |
@@ -69,7 +73,8 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 10 This-month/caller/status filter parity | Tested locally | IST month preset, current-status filter and explicit caller event scope |
 | 10 Brand/product/landing page filters | Tested locally | Frozen catalog snapshot filters |
 | 11 Operational KPI cards and daily trend / leaderboard / status outcomes | Tested locally | Existing management performance tables and cards |
-| 11 Hourly arrivals, all charts, reason analytics and dashboard-wide caller/status filters | Tested locally / Pending | Eight charts, hourly arrivals, supplied reasons, leaderboard and caller/status filters; connected quality, trusted OTP and reliable live budget metrics pending |
+| 11 Eight operational charts, hourly arrivals, reasons, caller/status filters | Tested locally | Implemented dashboard/chart components and authoritative report scope; performance tests revalidated |
+| 11 Connected quality, trusted OTP metrics and reliable live budget insights | Pending | Separate report/data gaps remain; implemented charts are not these missing classifications/provider acceptances. See P08/P09/P12/P28 |
 | 11 Product/page/creative comparisons | Tested locally | Separate performance/attribution modules; not one complete dashboard |
 | 11 UTC storage and Asia/Kolkata reporting | Tested locally | Existing timestamp rules and boundary tests |
 | 12 Preserve campaign/ad-set/ad/creative/account/placement/click/UTM claims | Tested locally | Dynamic original answers; explicit claims now visible by default when supplied |
@@ -77,7 +82,8 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 12 Creative lead/confirm/CNP/Retry/rate reports | Tested locally | Existing attribution reports/tests; live capture incomplete |
 | 12 Date/brand/product/campaign/account/page/creative/version filters | Tested locally | Existing attribution/campaign report scopes; actual live URL macros unverified |
 | 12 Cross-account Master Creative mapping and languages | Tested locally | Existing explicit creative/campaign mappings; external software link pending |
-| 13 Meta OAuth, account discovery and read-only spend sync | Tested locally | Mock-provider and worker tests; real app credentials/consent/worker pending |
+| 13 Meta OAuth, account discovery and read-only spend sync implementation | Tested locally | Existing provider/worker/report model; Meta core/sync tests revalidated with simulated provider data |
+| 13 Actual Meta consent/account selection/worker/sync acceptance | Pending | App ID/Secret and worker DB URL absent; valid-format encryption key exists; public HTTPS origin absent. No real provider session/sync verified |
 | 13 CPL / cost per confirmed lead / efficiency | Tested locally | Coverage-aware partial-capture reports; reliable live campaign costs pending |
 | 13 Creative Performance Software data connection | Pending | No real external system integration verified |
 | 13 Advisory budget recommendations / automatic changes | Pending | Recommendations absent; automatic budget changes excluded |
@@ -92,7 +98,7 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 16 Configurable repeat policy | Pending | Current behavior preserves repeat inquiries; no full policy UI |
 | 17 Organization/brand/product/page/version hierarchy and reporting | Tested locally | Catalog and scoped report tests; optional unknown mapping retained |
 | 18 Admin/Manager/Telecaller/Analyst backend role boundaries | Tested locally | Existing RLS/API tests; analysts denied raw customer PII |
-| 18 Full Admin export/status/default-field controls | Tested locally / Pending | Admin status/default fixed/answer columns and bounded CSV/XLSX export |
+| 18 Admin export/status/default-field controls | Tested locally | Admin status/default fixed/answer columns and bounded CSV/XLSX export implemented; current workspace-settings/XLSX tests passed. See P16 |
 | 19 Follow-up dates/notes, optional caller, due today, overdue/count/history | Tested locally | Existing follow-up module and prior main integration |
 | 20 Relational records plus JSONB, raw payload, internal/external IDs | Tested locally | Migrations and submitted-order projection tests |
 | 20 Constraints/indexes/append-only history/protected fields/migrations | Tested locally | Existing SQL tests; no schema change required here |
@@ -108,8 +114,8 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 | 24 Tailwind/shadcn/high-performance grid library parity | Pending | Existing custom React table/CSS; not the specified full grid surface |
 | 24 Public hosting, separate staging/production environments | Pending | Localhost only; hosting decision/access required |
 | 25 Server credentials, validation, RLS/grants, PII protection and login/session controls | Tested locally | Existing security/authorization evidence; no new auth changes |
-| 25 HTTPS, backup/restore drill, organization-wide retention/deletion policy, separate production credentials | Pending | Scoped native 77-table local restore and temporary HTTPS entry verified; full production recovery/retention and authenticated public workflow pending |
-| 26 Phase 1/2 roadmap | Pending | Most calling core implemented; live capture and listed UI/export gaps remain; roadmap paused |
+| 25 HTTPS, backup/restore drill, retention/deletion policy, production credentials | Pending | Native tools and prior 77-table local restore exist. Owner reported temporary tunnel login/theme success; full production recovery, retained secrets/Storage/Auth coverage and policy remain unverified. See P22 |
+| 26 Phase 1/2 roadmap | Pending | Calling/settings/export/charts are implemented locally; live capture and other qualified PDF/policy gaps remain. Roadmap paused; not a separate missing-report item |
 | 26 Phase 3 roadmap | Pending | Local attribution exists; external software integration/live capture pending |
 | 26 Phase 4 roadmap | Pending | Local Meta model exists; live sync, alerts, scheduled summaries and optional AI reports pending |
 | 27 Modular code/types/migrations/tests/docs and preservation rules | Tested locally | Existing repository practice; this review changes no accounts/Admin/invites |
@@ -127,3 +133,6 @@ Status meanings: **Tested locally** = repository implementation with automated/l
 Current-task evidence and developer/live acceptance instructions are in [core-workflow-pilot.md](core-workflow-pilot.md). The subsequent direct HTTP API review, reusable Sir demo, actual responses and form-encoded verification are in [public-lead-api.md](public-lead-api.md). Earlier unchanged feature evidence is in `docs/live-acceptance-through-step-9.md`, Step 10–12 status records and corresponding tests. No broad historic test rerun is implied by this audit.
 
 The simpler daily calling view is **tested locally**, documented in [simple-calling-workflow.md](simple-calling-workflow.md). It reuses the existing lead search, calls and follow-up APIs. Browser saves were intercepted; no test call or new lead was persisted. This does not change the pending live website/real Sheet acceptance status.
+
+
+No UI, provider or live website behavior was newly exercised by this documentation review. Current shared UI evidence is in [crm-reference-workspace.md](crm-reference-workspace.md); earlier fixture-based acceptance remains historical evidence, not a newly rerun live check.
