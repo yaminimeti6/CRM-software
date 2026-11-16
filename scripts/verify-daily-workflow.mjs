@@ -1,3 +1,4 @@
+import {chooseTheme} from './lib/ui-appearance.mjs';
 // Existing Admin/records only. Real read APIs; all business mutations blocked.
 import assert from 'node:assert/strict';
 import {migrate,lockId} from './lib/bootstrap.mjs';
@@ -35,7 +36,7 @@ try{
  stage='open first retained result';await page.goto(base+'/app?q='+encodeURIComponent(example.name));const row=page.locator('tr[data-lead-id="'+example.id+'"]');await row.waitFor();
  await page.getByRole('button',{name:'Open first result',exact:true}).click();await page.getByRole('dialog').waitFor();assert.equal(await page.getByRole('tab',{name:'Calls',exact:true}).getAttribute('aria-selected'),'true');await page.getByRole('button',{name:'Close lead details',exact:true}).click();
  stage='desktop and mobile';await page.waitForFunction(()=>!document.querySelector('.daily-lead-buttons button')?.disabled);await row.waitFor();
- for(const theme of ['Light','Dark','Mixed']){await page.getByRole('button',{name:'Theme '+theme,exact:true}).click();await page.screenshot({path:root+'/daily-'+theme.toLowerCase()+'.png',mask:[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')]});}
+ for(const theme of ['Light','Dark','Mixed']){await chooseTheme(page,theme);await page.screenshot({path:root+'/daily-'+theme.toLowerCase()+'.png',mask:[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')]});}
  await page.setViewportSize({width:390,height:844});await page.waitForFunction(()=>document.querySelector('.crm-sidebar')?.inert===true);await page.waitForFunction(()=>document.documentElement.scrollWidth<=innerWidth);await page.screenshot({path:root+'/daily-mobile.png',mask:[page.locator('.crm-profile-label')]});
  stage='preservation';assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);assert.deepEqual(writes,[]);assert.deepEqual(errors,[]);
  writeFileSync(root+'/evidence.json',JSON.stringify({base,server_queues:['all','new','pending_callbacks'],follow_up_views:['due_today','overdue'],first_result_tab:'Calls',themes:['light','dark','mixed'],mobile_width:390,business_writes:0,new_leads:0,new_users:0,public_records_passwords_unchanged:true,live_integration:'pending'},null,2));

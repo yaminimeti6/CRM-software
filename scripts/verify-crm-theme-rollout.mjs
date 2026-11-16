@@ -1,3 +1,4 @@
+import {chooseTheme} from './lib/ui-appearance.mjs';
 // Existing Admin/records only. Real read APIs; all business mutations blocked.
 import assert from 'node:assert/strict';
 import {existsSync,mkdirSync,writeFileSync} from 'node:fs';
@@ -28,9 +29,9 @@ try{
  await page.route('**/*',async route=>{const r=route.request(),u=new URL(r.url());if(u.origin===base&&['POST','PATCH','PUT','DELETE'].includes(r.method())&&!readPosts.has(u.pathname)){blockedWrites.push(u.pathname);return route.abort();}return route.continue();});
  const items=crmNavigation('admin').flatMap(group=>group.items),themes=['light','dark','mixed'];mkdirSync(root,{recursive:true});
  const mask=[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')];
- await page.goto(base+'/app?q='+encodeURIComponent(example.name));await page.getByRole('group',{name:'Color theme'}).waitFor();
+ await page.goto(base+'/app?q='+encodeURIComponent(example.name));await page.getByLabel('Appearance',{exact:true}).waitFor();
  for(const theme of themes){
-  await page.getByRole('button',{name:'Theme '+theme[0].toUpperCase()+theme.slice(1),exact:true}).click();
+  await chooseTheme(page,theme);
   for(const item of items){
    stage=theme+' '+item.href;
    const apiReady=page.waitForResponse(r=>new URL(r.url()).pathname===expectedApi[item.href]&&r.request().resourceType()==='fetch'&&(item.href!=='/app/follow-ups'||new URL(r.url()).searchParams.has('view')),{timeout:30000});
@@ -38,13 +39,13 @@ try{
    if(item.href==='/app')await page.goto(base+'/app?q='+encodeURIComponent(example.name));else {const link=page.locator('.crm-sidebar').getByRole('link',{name:item.label,exact:true});if(!await link.isVisible()){const group=crmNavigation('admin').find(g=>g.items.some(i=>i.href===item.href));await page.locator('.crm-sidebar').getByText(group.label,{exact:true}).click();}await link.click();}
    const api=await apiReady;assert.equal(api.status(),200,'Read API failed for '+item.href);
    await page.waitForFunction(expected=>document.querySelector('.crm-shell')?.getAttribute('data-crm-theme')===expected,theme);
-   assert.equal(await page.locator('.crm-shell').count(),1);assert.equal(await page.locator('.app-header').count(),0);
+   assert.equal(await page.locator('.crm-shell').count(),1);assert.equal(await page.locator('.crm-shell').getAttribute('data-workspace-design'),'reference');assert.equal(await page.locator('.app-header').count(),0);
    assert.equal(await page.locator('.crm-page-heading h2').innerText(),item.label);
    assert.equal(await page.locator('.crm-sidebar a[aria-current="page"]').getAttribute('href'),item.href);
-   assert.equal(await page.locator('.crm-content>section').first().evaluate(el=>getComputedStyle(el).backgroundColor),theme==='dark'?'rgb(22, 33, 50)':'rgb(255, 255, 255)');
+   assert.equal(await page.locator('.crm-content>section').first().evaluate(el=>getComputedStyle(el).backgroundColor),theme==='dark'?'rgb(32, 35, 40)':'rgb(255, 255, 255)');
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Page-wide overflow: '+item.href);
    results.push({theme,page:item.href,read_status:api.status(),active_title:true,single_shell:true});
-   if(['/app/follow-ups','/app/performance','/app/meta'].includes(item.href)){
+   { // Capture each existing page for local visual review.
     await page.waitForTimeout(150);await page.evaluate(()=>scrollTo(0,0));
     await page.screenshot({path:root+'/'+item.href.split('/').at(-1)+'-'+theme+'.png',mask,maskColor:theme==='light'?'#fff':'#111c2d'});
    }
@@ -52,7 +53,7 @@ try{
  }
  stage='Team and invitation controls retained';await page.goto(base+'/app/team');await page.getByRole('heading',{name:'Staff',exact:true}).waitFor();await page.getByText('Invite staff',{exact:true}).click();assert(await page.getByRole('button',{name:'Create invitation',exact:true}).isVisible());assert.equal(await page.getByLabel('Invitation role',{exact:true}).inputValue(),'telecaller');
  stage='narrow-screen pages';await page.setViewportSize({width:390,height:844});
- for(const path of ['/app/follow-ups','/app/performance','/app/team','/app/attribution']){
+ for(const path of items.map(item=>item.href)){
   await page.goto(base+path);await page.waitForFunction(()=>document.querySelector('.crm-sidebar')?.inert===true);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'Mobile page-wide overflow: '+path);
   await page.getByRole('button',{name:'Open navigation',exact:true}).click();assert.equal(await page.locator('.crm-shell').getAttribute('data-mobile-open'),'true');await page.getByRole('button',{name:'Close navigation',exact:true}).click();
  }
@@ -63,14 +64,14 @@ try{
   stage='public screens '+theme;await publicPage.goto(base+'/login');await publicPage.getByRole('button',{name:'Theme '+theme[0].toUpperCase()+theme.slice(1),exact:true}).click();
   for(const path of ['/login','/join']){
    await publicPage.goto(base+path);await publicPage.waitForFunction(expected=>document.querySelector('.crm-auth-frame')?.getAttribute('data-crm-theme')===expected,theme);assert.equal(await publicPage.locator('.crm-sidebar').count(),0);
-   assert.equal(await publicPage.locator('.crm-auth-content>section').evaluate(el=>getComputedStyle(el).backgroundColor),theme==='dark'?'rgb(22, 33, 50)':'rgb(255, 255, 255)');
+   assert.equal(await publicPage.locator('.crm-auth-content>section').evaluate(el=>getComputedStyle(el).backgroundColor),theme==='dark'?'rgb(32, 35, 40)':'rgb(255, 255, 255)');
    await publicPage.screenshot({path:root+'/'+path.slice(1)+'-'+theme+'.png'});
   }
  }
  stage='unauthenticated route protection';for(const item of items){await publicPage.goto(base+item.href);await publicPage.waitForURL('**/login');assert.equal(await publicPage.locator('.crm-sidebar').count(),0);}
  await publicContext.close();await context.close();await browser.close();browser=null;
  stage='record/account preservation';assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);assert.deepEqual(blockedWrites,[]);assert.deepEqual(errors,[]);
- writeFileSync(root+'/evidence.json',JSON.stringify({pages:results,themes,protected_pages:items.length,public_screens:['/login','/join'],mobile_checked:['/app/follow-ups','/app/performance','/app/team','/app/attribution'],business_writes:0,new_leads:0,new_users:0,existing_records_passwords_unchanged:true,legacy_navbars:0,live_website_integration:'pending'},null,2));
+ writeFileSync(root+'/evidence.json',JSON.stringify({pages:results,themes,protected_pages:items.length,public_screens:['/login','/join'],mobile_checked:items.map(item=>item.href),business_writes:0,new_leads:0,new_users:0,existing_records_passwords_unchanged:true,legacy_navbars:0,live_website_integration:'pending'},null,2));
  console.log('PASS '+results.length+' authenticated page/theme combinations; all existing page read APIs 200, single shared shell/active nav, public auth themes, mobile overflow/drawers, unauthenticated redirects; zero business writes/new leads/users; existing public records/passwords unchanged.');
 }catch(e){console.error('Stage: '+stage);if(e.name==='AssertionError'||e.name==='TimeoutError')console.error(String(e.message).split('\n').slice(0,7).join('\n'));reportFailure(e,'whole CRM theme rollout');}
 finally{await browser?.close();if(auth)await auth.auth.signOut({scope:'local'});await db?.end();}

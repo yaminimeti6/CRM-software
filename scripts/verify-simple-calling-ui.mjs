@@ -1,3 +1,4 @@
+import {chooseTheme} from './lib/ui-appearance.mjs';
 // Main CRM browser verification using an existing record and existing Admin identity.
 // No lead/user fixtures. All business writes are intercepted; only read APIs reach CRM.
 import assert from 'node:assert/strict';
@@ -52,7 +53,7 @@ try{
  mkdirSync(root,{recursive:true});
  const mask=[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')];
  for(const theme of ['Light','Dark','Mixed']){
-  await page.getByRole('button',{name:'Theme '+theme,exact:true}).click();await page.reload();await card.waitFor();
+  await chooseTheme(page,theme);await page.reload();await card.waitFor();
   assert.equal(await page.locator('.crm-shell').getAttribute('data-crm-theme'),theme.toLowerCase());
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:root+'/'+theme.toLowerCase()+'.png',mask});

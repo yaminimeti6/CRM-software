@@ -1,3 +1,4 @@
+import {chooseTheme} from './lib/ui-appearance.mjs';
 // Main CRM browser verification using an existing record and existing Admin identity.
 // No lead/user fixtures. All business writes are intercepted; only read APIs reach CRM.
 import assert from 'node:assert/strict';
@@ -45,15 +46,15 @@ try{
  const shell=page.locator('.crm-shell');assert.equal(await shell.getAttribute('data-crm-theme'),'mixed');
  assert.equal(await page.locator('.crm-sidebar a[aria-current="page"]').getAttribute('href'),'/app');
  assert.equal(await row.locator('td').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize)),14);
- const themeColors={light:{surface:'rgb(255, 255, 255)',nav:'rgb(255, 255, 255)'},dark:{surface:'rgb(22, 33, 50)',nav:'rgb(12, 21, 35)'},mixed:{surface:'rgb(255, 255, 255)',nav:'rgb(17, 28, 45)'}};
+ const themeColors={light:{surface:'rgb(255, 255, 255)',nav:'rgb(247, 247, 248)'},dark:{surface:'rgb(32, 35, 40)',nav:'rgb(24, 26, 30)'},mixed:{surface:'rgb(255, 255, 255)',nav:'rgb(32, 35, 40)'}};
  for(const theme of ['light','dark','mixed']){
-  await page.getByRole('button',{name:'Theme '+theme[0].toUpperCase()+theme.slice(1),exact:true}).click();
+  await chooseTheme(page,theme);
   await page.reload();await row.waitFor();await page.waitForFunction(expected=>document.querySelector('.crm-shell')?.getAttribute('data-crm-theme')===expected,theme);
   const colors=await page.evaluate(()=>({surface:getComputedStyle(document.querySelector('.leads-workspace')).backgroundColor,nav:getComputedStyle(document.querySelector('.crm-sidebar')).backgroundColor,top:getComputedStyle(document.querySelector('.crm-topbar')).backgroundColor,overflow:document.documentElement.scrollWidth>innerWidth}));
   assert.equal(colors.surface,themeColors[theme].surface);assert.equal(colors.nav,themeColors[theme].nav);assert.equal(colors.overflow,false);
-  if(theme==='mixed')assert.equal(colors.top,'rgb(17, 28, 45)');
+  if(theme==='mixed')assert.equal(colors.top,'rgb(32, 35, 40)');
   await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:themeRoot+'/'+theme+'.png',mask:[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')],maskColor:theme==='light'?'#ffffff':'#111c2d'});
-  await page.getByText('Add Lead',{exact:true}).click();assert.equal(await page.getByLabel('Mobile number',{exact:true}).evaluate(el=>getComputedStyle(el).fontSize),'14px');assert.equal(await page.getByLabel('Mobile number',{exact:true}).evaluate(el=>getComputedStyle(el).backgroundColor),theme==='dark'?'rgb(16, 27, 43)':'rgb(255, 255, 255)');await page.getByText('Add Lead',{exact:true}).click();
+  await page.getByText('Add Lead',{exact:true}).click();assert.equal(await page.getByLabel('Mobile number',{exact:true}).evaluate(el=>getComputedStyle(el).fontSize),'14px');assert.equal(await page.getByLabel('Mobile number',{exact:true}).evaluate(el=>getComputedStyle(el).backgroundColor),theme==='dark'?'rgb(37, 41, 48)':'rgb(255, 255, 255)');await page.getByText('Add Lead',{exact:true}).click();
   await page.locator('.source-filter-menu > summary').click();assert.equal(await page.locator('.source-filter-content').evaluate(el=>getComputedStyle(el).backgroundColor),themeColors[theme].surface);await page.locator('.source-filter-menu > summary').click();
   await row.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();const preview=page.getByRole('dialog',{name:lead.name,exact:true});
   await preview.getByRole('tab',{name:'Source',exact:true}).click();assert.equal(await preview.evaluate(el=>getComputedStyle(el).backgroundColor),themeColors[theme].surface);await preview.screenshot({path:themeRoot+'/'+theme+'-panel.png'});
@@ -67,7 +68,7 @@ try{
  await page.screenshot({path:themeRoot+'/mobile-mixed.png',mask:[page.locator('.crm-profile-label')]});
  await row.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.getByRole('button',{name:'Close lead details',exact:true}).click();
  await page.setViewportSize({width:1600,height:780});await page.evaluate(()=>scrollTo(0,0));
- stage='all six detail tabs';await row.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();const drawer=page.getByRole('dialog',{name:lead.name,exact:true});await drawer.waitFor();assert((await drawer.innerText()).includes('6875bfac-874e-4784-ab30-41807442951d'));
+ stage='all six detail tabs';await row.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();const drawer=page.getByRole('dialog',{name:lead.name,exact:true});await drawer.waitFor();await drawer.getByText('Order references & original fields',{exact:true}).click();assert((await drawer.innerText()).includes('6875bfac-874e-4784-ab30-41807442951d'));
  await drawer.getByRole('tab',{name:'Source',exact:true}).click();assert((await drawer.innerText()).includes('dailyhealthfocus.info'));assert((await drawer.innerText()).includes('instagram'));assert((await drawer.innerText()).includes('https://dailyhealthfocus.info/Wife/'));
  await drawer.screenshot({path:root+'/all-leads-source-panel.png'});
  await drawer.getByRole('tab',{name:'Answers',exact:true}).click();assert((await drawer.innerText()).includes('Sir Demo Typed Answer'));

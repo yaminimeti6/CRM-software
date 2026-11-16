@@ -1,3 +1,4 @@
+import {chooseTheme} from './lib/ui-appearance.mjs';
 // Main CRM browser verification using an existing record and existing operational identity.
 // No lead/user fixtures. All business writes are intercepted; only read APIs reach CRM.
 import assert from 'node:assert/strict';
@@ -52,7 +53,7 @@ try{
  mkdirSync(root,{recursive:true});
  const mask=[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')];
  for(const theme of ['Light','Dark','Mixed']){
-  await page.getByRole('button',{name:'Theme '+theme,exact:true}).click();await page.reload();await card.waitFor();
+  await chooseTheme(page,theme);await page.reload();await card.waitFor();
   assert.equal(await page.locator('.crm-shell').getAttribute('data-crm-theme'),theme.toLowerCase());
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.screenshot({path:root+'/'+theme.toLowerCase()+'.png',mask});
@@ -67,7 +68,7 @@ try{
  assert.equal(patches.length,1);assert.equal(patches[0].status_id,alternative);assert.equal(await statusSelect.inputValue(),lead.status_id);assert(Number.isSafeInteger(patches[0].version));
  stage='simple order and details';await card.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();
  const drawer=page.getByRole('dialog',{name:lead.name,exact:true});await drawer.waitFor();
- assert.equal(await drawer.getByRole('tab').count(),4);
+ assert.equal(await drawer.getByRole('tab').count(),4);assert.equal(await drawer.locator('.record-overview').count(),1);await drawer.screenshot({path:root+'/record-overview.png'});
  await drawer.getByRole('tab',{name:'Answers',exact:true}).click();const answers=drawer.getByRole('tabpanel',{name:'Answers',exact:true});
  assert.match(await answers.innerText(),/Sir Demo Typed Answer/);assert(!(await answers.innerText()).includes('paid_social'));assert(!(await answers.innerText()).includes('{"choice"'));
  await answers.getByText('Order & tracking fields',{exact:true}).click();assert((await answers.innerText()).includes('paid_social'));await answers.getByText('Order & tracking fields',{exact:true}).click();

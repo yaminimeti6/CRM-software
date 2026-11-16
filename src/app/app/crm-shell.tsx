@@ -55,7 +55,7 @@ export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()
  },[mobileOpen]);
  function toggleSidebar(){const next=!collapsed;setCollapsed(next);try{localStorage.setItem('crm.ui.sidebar.v1',next?'collapsed':'expanded');}catch{}}
  const initials=user.name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'U';
- return <div className="crm-shell" data-crm-theme={theme} data-collapsed={collapsed} data-mobile-open={mobileOpen}>
+ return <div className="crm-shell crm-reference" data-workspace-design="reference" data-crm-theme={theme} data-collapsed={collapsed} data-mobile-open={mobileOpen}>
   <a className="crm-skip-link" href="#crm-page-content">Skip to content</a>
   {mobileOpen&&<button className="crm-mobile-backdrop" aria-label="Close navigation backdrop" onClick={()=>{closeNavigation();}}/>}
   <aside ref={side} className="crm-sidebar" role={mobileOpen?'dialog':undefined} aria-modal={mobileOpen||undefined} aria-label="Main navigation" inert={mobile&&!mobileOpen}>
@@ -65,8 +65,8 @@ export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()
   </aside>
   <div className="crm-main" inert={mobileOpen}><header className="crm-topbar"><div className="crm-page-heading"><button ref={menuButton} className="crm-mobile-toggle crm-icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={()=>setMobileOpen(true)}><CrmIcon name="menu"/></button><div><span className="crm-breadcrumb">{currentGroup?.label??'Workspace'}</span><h2>{current?.label??'Access unavailable'}</h2></div></div><div className="crm-topbar-actions">
    {user.role!=='creative_analyst'&&<ReminderMenu/>}
-   <CrmThemeSwitch theme={theme} onChange={chooseTheme}/>
-   <details className="crm-top-menu crm-profile-menu"><summary aria-label="User profile menu"><span className="crm-avatar">{initials}</span><span className="crm-profile-label">{user.name}</span><CrmIcon name="chevron"/></summary><div className="crm-menu-content"><strong>Your staff account</strong><dl><dt>Name</dt><dd>{user.name}</dd><dt>Role</dt><dd>{roleLabels[user.role]}</dd><dt>{user.username?'Username':'Email'}</dt><dd>{user.username||user.email||'Not required'}</dd><dt>Organization ID</dt><dd>{user.organizationId}</dd></dl><form action={logoutAction}><button>Sign out</button></form></div></details>
+   <details className="crm-top-menu crm-appearance-menu"><summary aria-label="Appearance" title="Appearance"><CrmIcon name={theme}/><span>Appearance</span></summary><div className="crm-menu-content"><strong>Appearance</strong><CrmThemeSwitch theme={theme} onChange={chooseTheme}/></div></details>
+   <details className="crm-top-menu crm-profile-menu"><summary aria-label="User profile menu"><span className="crm-avatar">{initials}</span><span className="crm-profile-label">{user.name}</span><CrmIcon name="chevron"/></summary><div className="crm-menu-content"><strong>Your staff account</strong><dl><dt>Name</dt><dd>{user.name}</dd><dt>Role</dt><dd>{roleLabels[user.role]}</dd><dt>{user.username?'Username':'Email'}</dt><dd>{user.username||user.email||'Not required'}</dd></dl><form action={logoutAction}><button>Sign out</button></form></div></details>
   </div></header><div id="crm-page-content" className="crm-content" tabIndex={-1}>{children}</div></div>
  </div>;
 }
