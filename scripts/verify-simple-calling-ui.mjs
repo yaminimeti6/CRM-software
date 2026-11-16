@@ -59,7 +59,7 @@ try{
   await page.screenshot({path:root+'/'+theme.toLowerCase()+'.png',mask});
  }
  stage='reachable row call action';
- await card.getByRole('button',{name:'Open call form',exact:true}).click();assert.equal(await page.getByRole('dialog').getByRole('tab',{name:'Calls',exact:true}).getAttribute('aria-selected'),'true');await page.getByRole('button',{name:'Close lead details',exact:true}).click();
+ await card.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();await page.getByRole('dialog').getByRole('tab',{name:'Log Call',exact:true}).click();assert.equal(await page.getByRole('dialog').getByRole('tab',{name:'Log Call',exact:true}).getAttribute('aria-selected'),'true');await page.getByRole('button',{name:'Close lead details',exact:true}).click();
  const box=await card.boundingBox();assert(box.y+box.height<780,'First row must be visible without page scrolling');
  stage='inline status without Edit row';
  const statusSelect=card.getByLabel('Status for '+lead.name,{exact:true});assert(await statusSelect.isVisible());
@@ -68,10 +68,10 @@ try{
  assert.equal(patches.length,1);assert.equal(patches[0].status_id,alternative);assert.equal(await statusSelect.inputValue(),lead.status_id);assert(Number.isSafeInteger(patches[0].version));
  stage='simple order and details';await card.getByRole('button',{name:'Open lead '+lead.name,exact:true}).click();
  const drawer=page.getByRole('dialog',{name:lead.name,exact:true});await drawer.waitFor();
- assert.equal(await drawer.getByRole('tab').count(),4);
+ assert.equal(await drawer.getByRole('tab').count(),3);
  await drawer.getByRole('button',{name:'More details & history',exact:true}).click();assert.equal(await drawer.getByRole('tab').count(),6);
  await drawer.getByRole('tab',{name:'Source',exact:true}).click();await drawer.getByRole('button',{name:'Hide extra details',exact:true}).click();
- assert.equal(await drawer.getByRole('tab',{name:'Order',exact:true}).getAttribute('aria-selected'),'true');
+ assert.equal(await drawer.getByRole('tab',{name:'Order Details',exact:true}).getAttribute('aria-selected'),'true');
  await drawer.getByRole('button',{name:'Open call form',exact:true}).click();
  const call=drawer.getByRole('region',{name:'Lead calls'});
  const outcome=drawer.getByLabel('Call outcome',{exact:true});await outcome.waitFor();
@@ -80,7 +80,7 @@ try{
  await drawer.getByLabel('Call notes (optional)',{exact:true}).fill('Intercepted browser verification; never sent to server.');
  await drawer.getByLabel('Call again later',{exact:true}).check();
  await drawer.locator('input[type="datetime-local"]').fill('2026-12-01T10:30');
- await drawer.getByRole('tab',{name:'Order',exact:true}).click();await drawer.getByRole('tab',{name:'Calls',exact:true}).click();
+ await drawer.getByRole('tab',{name:'Order Details',exact:true}).click();await drawer.getByRole('tab',{name:'Log Call',exact:true}).click();
  assert.equal(await drawer.getByLabel('Call notes (optional)',{exact:true}).inputValue(),'Intercepted browser verification; never sent to server.');
  await page.screenshot({path:root+'/call-form.png',mask});
  stage='same request retry without business writes';
