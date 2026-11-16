@@ -1,7 +1,7 @@
-export const leadColumnLabels={name:'Name',mobile:'Mobile',status:'Status',course:'Course / price',source:'Website / landing page',traffic:'Reported traffic source',received:'Received (IST)',address:'Address',notes:'Notes',actions:'Actions'} as const;
+export const leadColumnLabels={name:'Name',mobile:'Mobile',status:'Status',course:'Course',source:'Website / landing page',traffic:'Reported traffic source',received:'Received (IST)',address:'Address',notes:'Notes',actions:'Actions'} as const;
 export type LeadColumn=keyof typeof leadColumnLabels;
 export const defaultLeadColumns=Object.keys(leadColumnLabels) as LeadColumn[];
-export const defaultColumnWidths:Record<LeadColumn,number>={name:220,mobile:150,status:140,course:180,source:220,traffic:180,received:180,address:200,notes:180,actions:180};
+export const defaultColumnWidths:Record<LeadColumn,number>={name:220,mobile:150,status:140,course:130,source:220,traffic:150,received:140,address:200,notes:180,actions:170};
 export type ColumnLayout={order:LeadColumn[];hidden:LeadColumn[];widths:Partial<Record<LeadColumn,number>>;quiz:string[]};
 export const defaultColumnLayout=():ColumnLayout=>({order:[...defaultLeadColumns],hidden:[],widths:{},quiz:[]});
 export function validateColumnLayout(raw:unknown):ColumnLayout{

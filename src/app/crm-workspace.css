@@ -74,6 +74,10 @@
 .crm-shell.crm-reference .compact-leads-table .lead-mobile { font-variant-numeric:tabular-nums; }
 .crm-shell.crm-reference .compact-leads-table .cell-secondary { font-size:13px;line-height:1.4; }
 .crm-shell.crm-reference .compact-leads-table .lead-row-actions .row-call-action { font-size:13px;padding:6px 10px; }
+.crm-shell.crm-reference .row-more-actions { display:inline-block;vertical-align:middle;margin-left:6px; }
+.crm-shell.crm-reference .row-more-actions>summary { list-style:none;cursor:pointer;padding:3px 8px;font-size:20px;line-height:1;border-radius:4px;color:var(--crm-muted); }
+.crm-shell.crm-reference .row-more-actions>summary::-webkit-details-marker { display:none; }
+.crm-shell.crm-reference .row-more-actions[open] { display:block;margin:6px 0 0; }
 .crm-shell.crm-reference .compact-leads-table .work-last-call,.crm-shell.crm-reference .compact-leads-table .work-next-follow-up { margin:4px 0;font-size:13px; }
 .crm-shell.crm-reference .status-badge { border-radius:4px;padding:3px 7px;font-size:12px;border:1px solid var(--crm-border);background:var(--crm-soft); }
 .crm-shell.crm-reference .leads-heading { margin-bottom:14px;align-items:center; }
