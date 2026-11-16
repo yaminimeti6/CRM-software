@@ -12,8 +12,11 @@
   font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:14px;line-height:1.5;
 }
 .crm-shell.crm-reference[data-crm-theme=mixed] {
-  --crm-nav-bg:#202328;--crm-nav-text:#e5e7eb;--crm-nav-muted:#a2a8b2;
-  --crm-nav-border:#353a43;--crm-nav-active:#343a46;--crm-top-bg:#202328;--crm-top-text:#e5e7eb;
+  --crm-bg:#edf2f8;--crm-surface:#fff;--crm-soft:#f3f6fb;--crm-control:#fff;
+  --crm-text:#24354b;--crm-muted:#64748b;--crm-border:#dce5f0;
+  --crm-accent:#376bc2;--crm-accent-soft:#eaf1fc;
+  --crm-nav-bg:#24364d;--crm-nav-text:#edf3fc;--crm-nav-muted:#b5c5db;
+  --crm-nav-border:#3b506b;--crm-nav-active:#354c68;--crm-top-bg:#e5edf7;--crm-top-text:#304968;
 }
 .crm-shell.crm-reference[data-crm-theme=dark] {
   --crm-bg:#202328;--crm-surface:#202328;--crm-soft:#272b32;--crm-control:#252930;
@@ -210,3 +213,11 @@
 .crm-shell.crm-reference[data-collapsed=true] .crm-sidebar nav a { padding:8px;justify-content:center; }
 .crm-shell.crm-reference[data-collapsed=true] .crm-sidebar-workspace { padding:8px 0;border:0; }
 @media(max-width:900px) { .crm-shell.crm-reference .crm-sidebar { width:260px; }.crm-shell.crm-reference[data-collapsed=true] .crm-sidebar nav a { justify-content:flex-start; }.crm-shell.crm-reference[data-collapsed=true] .crm-sidebar-workspace { padding:12px; } }
+
+/* Mixed: a slate-blue frame with softly separated content surfaces. */
+.crm-shell.crm-reference[data-crm-theme=mixed] .crm-content>section { padding:22px;border:1px solid var(--crm-border);border-radius:12px;box-shadow:0 3px 14px #24364d06; }
+.crm-shell.crm-reference[data-crm-theme=mixed] .crm-topbar { border-bottom-color:#cedbed; }
+.crm-shell.crm-reference[data-crm-theme=mixed] .crm-topbar .crm-avatar,.crm-shell.crm-reference[data-crm-theme=mixed] .crm-reminder-count { background:#d1def0;color:#304968; }
+.crm-shell.crm-reference[data-crm-theme=mixed] .crm-sidebar nav a[aria-current=page] { background:#416a9f;box-shadow:none; }
+@media(max-width:700px) { .crm-shell.crm-reference[data-crm-theme=mixed] .crm-content>section { padding:14px;border-radius:9px; } }
+.crm-shell.crm-reference[data-crm-theme=mixed] .crm-topbar .crm-breadcrumb { color:var(--crm-muted); }
