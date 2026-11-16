@@ -25,3 +25,7 @@ Use Appearance in the top bar to choose Light, Dark or Mixed; the existing theme
 - Screenshots and evidence: `.cache/contacts-ui/` (local, ignored). These are localhost checks, not live website acceptance.
 
 Live website ingestion and real Google Sheet verification remain pending. No hosting, deployment or GitHub push is included.
+
+## Sidebar refresh
+
+The shared sidebar now uses rounded icon tiles, a blue active-page selection, more readable spacing and a separate staff profile card. Role-authorized routes in Workspace, Reports and Admin / Settings are listed directly; the navigation area scrolls independently when necessary. Desktop collapse and the mobile drawer retain the existing persistence, focus and Escape behavior. Browser verification covers all eleven existing Admin destinations, collapsed icon titles, mobile open/close, all three themes and unchanged records/passwords. Two navigation/theme unit tests also pass.

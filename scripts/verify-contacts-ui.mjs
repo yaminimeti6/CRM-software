@@ -51,6 +51,14 @@ try{
  const next=(await db.query("select due_at from public.follow_ups where lead_id=$1 and state='pending' order by due_at,id limit 1",[lead.id])).rows[0];
  assert.equal(saved.work_summary.next_follow_up?.due_at?new Date(saved.work_summary.next_follow_up.due_at).toISOString():null,next?.due_at.toISOString()??null);
  assert(await page.locator('.crm-sidebar').getByRole('link',{name:'Leads',exact:true}).isVisible());
+ stage='sidebar visibility and collapse';
+ const sidebar=page.getByRole('complementary',{name:'Main navigation',exact:true});
+ assert.equal(await sidebar.getByRole('link').count(),11);
+ for(const link of await sidebar.getByRole('link').all())assert(await link.isVisible());
+ await sidebar.getByRole('button',{name:'Collapse sidebar',exact:true}).click();
+ assert.equal(await page.locator('.crm-shell').getAttribute('data-collapsed'),'true');
+ assert.equal(await sidebar.getByRole('link',{name:'Leads',exact:true}).getAttribute('title'),'Leads');
+ await sidebar.getByRole('button',{name:'Expand sidebar',exact:true}).click();
  stage='filters and existing create form';
  await page.getByRole('button',{name:'Filters',exact:true}).click();assert(await page.getByRole('button',{name:'Apply filters',exact:true}).isVisible());
  assert.deepEqual(await page.locator('.compact-leads-table th').allTextContents(),headers);
@@ -74,6 +82,11 @@ try{
   await drawer.getByRole('button',{name:'Close lead details',exact:true}).click();
  }
  stage='mobile';await page.setViewportSize({width:390,height:844});await page.waitForFunction(()=>!document.querySelector('.leads-workspace')?.textContent.includes('Loading leads'));await row.waitFor();assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:root+'/mobile.png'});
+ await page.getByRole('button',{name:'Open navigation',exact:true}).click();
+ const navigation=page.getByRole('dialog',{name:'Main navigation',exact:true});await navigation.waitFor();
+ assert(await navigation.getByRole('link',{name:'Leads',exact:true}).isVisible());
+ await page.screenshot({path:root+'/mobile-sidebar.png'});
+ await page.keyboard.press('Escape');assert.equal(await page.locator('.crm-shell').getAttribute('data-mobile-open'),'false');
  assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
  writeFileSync(root+'/evidence.json',JSON.stringify({headers,themes:['Light','Dark','Mixed'],existing_order_price_source:true,next_callback_matches_database:true,filters_keep_columns:true,existing_add_form:true,existing_call_followup_panels:true,dynamic_answers_available:true,mobile_no_page_overflow:true,all_public_data_and_passwords_unchanged:true,business_writes:0,live_website_integration:'pending'},null,2));
  console.log('PASS: six columns, existing order/source/callback, filters, create form, existing detail/call/follow-up panels, three persisted themes, mobile; all public data/passwords unchanged; zero business writes.');
