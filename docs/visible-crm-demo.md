@@ -15,3 +15,11 @@ All business writes are intercepted. A successful call response is simulated in 
 `node scripts/demo-crm-workflow.mjs --verify` runs the same journey headlessly without waiting for Next. The five-step rehearsal passed locally with one intercepted simulated call and unchanged public records/passwords. A rehearsal is distinct from the viewer completing the visible demo.
 
 The demo is localhost-only. It does not verify live website capture, the actual Sheet, Meta sync or hosting. No external messages, push or deployment are involved.
+
+## Full module tour
+
+Run `node scripts/demo-crm-modules.mjs` for the separate read-only Admin tour. Its 13 viewer-paced steps cover lead filters/columns, source attribution, history, follow-ups, performance/charts, attribution reports, Meta spend, Team/Invite Staff, lead sources, catalog, imports, Meta connection settings and workspace settings.
+
+Only known read APIs may POST. All business mutations, exports and Meta authorization routes are blocked; there is no simulated invitation, import or settings save. The tour explains that ordinary staff have fewer permissions and marks live website/real Sheet and actual Meta connection/sync as pending rather than claiming they work. No customer file is uploaded or invitation sent.
+
+`node scripts/demo-crm-modules.mjs --verify` passed its 13-step headless rehearsal with real read APIs, zero business-write attempts and unchanged public-record/password fingerprints. The visible tour advances through the DEMO box and ends on Finish tour. It uses the existing Admin only for its own temporary local browser session.
