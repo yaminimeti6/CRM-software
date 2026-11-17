@@ -10,13 +10,13 @@ The OAuth request now uses the platform's META_LOGIN_CONFIG_ID. The opaque state
 
 People in the same CRM organization intentionally share their permitted reports. Giving someone another staff account in your organization does not create a separate company. Independent customers need separate organization memberships; this change does not add a public signup/billing flow.
 
-## Exact blockers found locally
+## Current local configuration and blockers
 
 Presence/format inspection only; no values printed:
 
-- META_APP_ID: missing.
-- META_APP_SECRET: missing.
-- META_LOGIN_CONFIG_ID: missing.
+- META_APP_ID: present and numeric; value withheld.
+- META_APP_SECRET: present; value withheld. Token exchange/credential validity still requires actual consent and callback.
+- META_LOGIN_CONFIG_ID: present and numeric; value withheld.
 - META_TOKEN_ENCRYPTION_KEY: present and valid format; preserved, not regenerated.
 - META_WORKER_DATABASE_URL: missing.
 - CRM_APP_ORIGIN: present; local callback is http://localhost:3000/api/meta/callback . Provider acceptance is not verified.
@@ -38,4 +38,6 @@ Nine Meta tests pass, including two isolated companies authorizing independently
 
 Browser verification covers the actual missing-setup HTTP gate and intercepted provider-navigation/account-selection UX. The intercepted fixture is not Facebook authorization and does not prove App Review or sync approval.
 
-Remaining real acceptance: two authorized company Admins complete Facebook consent independently, select accounts, run the restricted worker, compare each spend report with its respective Ads Manager, verify that neither company can read the other's connection/report, and verify reconnect/disconnect isolation. No actual provider login, real account selection or real sync has been completed. Existing accounts, leads and passwords are preserved. No push/deployment.
+After private configuration was added, the local CRM was restarted. A real authenticated /api/meta/start returned HTTP 200, the browser button was enabled, configured IDs matched privately, and the resulting authorization URL reached the actual Facebook login page. No Facebook password or consent was submitted. The temporary test OAuth state was removed; existing public data/password hashes were unchanged. This verifies authorization launch, not completed login or sync.
+
+Remaining real acceptance: two authorized company Admins complete Facebook consent independently, select accounts, run the restricted worker, compare each spend report with its respective Ads Manager, verify that neither company can read the other's connection/report, and verify reconnect/disconnect isolation. Provider sign-in page reached; actual login/consent, real account selection and real sync remain unverified. Existing accounts, leads and passwords are preserved. No push/deployment.
