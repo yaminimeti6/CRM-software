@@ -1,6 +1,6 @@
 # Meta: separate Facebook connection for each CRM company
 
-Updated 2026-11-17. Local implementation and isolated tests; actual Facebook login/sync is not yet verified.
+Updated 2026-11-17. Actual owner authorization and first empty-snapshot sync are now verified for one company; nonempty spend reconciliation and third-party onboarding remain pending.
 
 ## Connection design
 
@@ -18,7 +18,7 @@ Presence/format inspection only; no values printed:
 - META_APP_SECRET: present; value withheld. Token exchange/credential validity still requires actual consent and callback.
 - META_LOGIN_CONFIG_ID: present and numeric; value withheld.
 - META_TOKEN_ENCRYPTION_KEY: present and valid format; preserved, not regenerated.
-- META_WORKER_DATABASE_URL: missing.
+- META_WORKER_DATABASE_URL: configured privately for the restricted crm_meta_runtime role. Its previously unset password was generated; no existing password was rotated. TLS and non-superuser/non-bypass role checks passed.
 - CRM_APP_ORIGIN: present; local callback is http://localhost:3000/api/meta/callback . Provider acceptance is not verified.
 
 ## Operator setup, not customer setup
@@ -40,4 +40,14 @@ Browser verification covers the actual missing-setup HTTP gate and intercepted p
 
 After private configuration was added, the local CRM was restarted. A real authenticated /api/meta/start returned HTTP 200, the browser button was enabled, configured IDs matched privately, and the resulting authorization URL reached the actual Facebook login page. No Facebook password or consent was submitted. The temporary test OAuth state was removed; existing public data/password hashes were unchanged. This verifies authorization launch, not completed login or sync.
 
-Remaining real acceptance: two authorized company Admins complete Facebook consent independently, select accounts, run the restricted worker, compare each spend report with its respective Ads Manager, verify that neither company can read the other's connection/report, and verify reconnect/disconnect isolation. Provider sign-in page reached; actual login/consent, real account selection and real sync remain unverified. Existing accounts, leads and passwords are preserved. No push/deployment.
+Remaining real acceptance: two authorized company Admins complete Facebook consent independently, select accounts, run the restricted worker, compare each spend report with its respective Ads Manager, verify that neither company can read the other's connection/report, and verify reconnect/disconnect isolation. This was the pre-consent checkpoint; see the actual first-publication verification below for the subsequent completed owner authorization and empty sync. Existing accounts, leads and passwords are preserved. No push/deployment.
+
+## Actual connection and first publication verified
+
+On 2026-11-17, the owner completed Facebook authorization and selected one discovered account. Database status was verified with an unexpired encrypted token. The initial job was queued at stage 0 because the restricted worker connection was absent. After configuring the existing restricted runtime identity privately, the local worker completed all five stages and published the snapshot with no provider error or retries. A hidden local worker process remains running; its PID is recorded only in ignored .cache/meta-worker-runtime.json. This is not hosted or deployed.
+
+The provider returned zero campaigns, ads and insight rows for the selected account and 2026-10-19 through 2026-11-17. Independent read-only Graph API requests returned the same empty result with no additional pages. This does not establish verified zero spend in Ads Manager; confirm that the selected account and granted access are the intended ones if activity is expected. Empty provider entities explain the empty advanced Meta-reference dropdown; that dropdown is attribution mapping, not the Facebook account connection.
+
+Actual consent, account selection and first empty-snapshot publication are now verified for this one organization. Third-party-company production approval, a second real company authorization, nonempty spend reconciliation against Ads Manager and live website/Sheet ingestion are still pending. No staff passwords or leads were changed.
+
+The main CRM browser was also checked after publication: verified connection, completed stage 5/5, selected published account present in Meta Spend, and the selected account's report API returned HTTP 200 with completed snapshot coverage and zero report rows. Other discovered but unselected accounts are not evidence of a completed sync.
