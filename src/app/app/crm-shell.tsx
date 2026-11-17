@@ -39,6 +39,7 @@ type User={name:string;email?:string|null;username?:string|null;role:Role;organi
 export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()=>Promise<void>;children:ReactNode}){
  const [theme,chooseTheme]=useCrmTheme();
  const pathname=usePathname(),[collapsed,setCollapsed]=useState(false),[mobile,setMobile]=useState(false),[mobileOpen,setMobileOpen]=useState(false);
+ const topbar=useRef<HTMLElement>(null);
  const side=useRef<HTMLElement>(null),menuButton=useRef<HTMLButtonElement>(null);
  function closeNavigation(){setMobileOpen(false);requestAnimationFrame(()=>menuButton.current?.focus());}
  const groups=crmNavigation(user.role),currentGroup=groups.find(group=>group.items.some(item=>item.href===pathname)),current=currentGroup?.items.find(item=>item.href===pathname);
@@ -53,6 +54,17 @@ export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()
   const keyboard=(event:KeyboardEvent)=>{if(event.key==='Escape'){closeNavigation();}if(event.key==='Tab'){const items=Array.from(side.current?.querySelectorAll<HTMLElement>('a[href],button')??[]).filter(item=>item.getClientRects().length>0);if(event.shiftKey&&document.activeElement===items[0]){event.preventDefault();items.at(-1)?.focus();}else if(!event.shiftKey&&document.activeElement===items.at(-1)){event.preventDefault();items[0]?.focus();}}};document.addEventListener('keydown',keyboard);
   return()=>{document.body.style.overflow=previousOverflow;document.removeEventListener('keydown',keyboard);};
  },[mobileOpen]);
+ useEffect(()=>{
+  const menus=()=>Array.from(topbar.current?.querySelectorAll<HTMLDetailsElement>('.crm-top-menu')??[]);
+  const dismiss=(event:Event)=>{const target=event.target;if(!(target instanceof Element))return;for(const menu of menus()){
+   if(!menu.contains(target)||(event.type==='click'&&target.closest('.crm-menu-content button,.crm-menu-content a')))menu.open=false;
+  }};
+  const opened=(event:Event)=>{const menu=event.target;if(!(menu instanceof HTMLDetailsElement)||!menu.open||!menus().includes(menu))return;for(const other of menus())if(other!==menu)other.open=false;};
+  const escape=(event:KeyboardEvent)=>{if(event.key!=='Escape')return;const active=menus().find(menu=>menu.open);if(!active)return;event.preventDefault();for(const menu of menus())menu.open=false;active.querySelector<HTMLElement>('summary')?.focus();};
+  document.addEventListener('click',dismiss,true);document.addEventListener('focusin',dismiss,true);document.addEventListener('toggle',opened,true);document.addEventListener('keydown',escape);
+  return()=>{document.removeEventListener('click',dismiss,true);document.removeEventListener('focusin',dismiss,true);document.removeEventListener('toggle',opened,true);document.removeEventListener('keydown',escape);};
+ },[]);
+ useEffect(()=>{topbar.current?.querySelectorAll<HTMLDetailsElement>('.crm-top-menu').forEach(menu=>{menu.open=false;});},[pathname]);
  function toggleSidebar(){const next=!collapsed;setCollapsed(next);try{localStorage.setItem('crm.ui.sidebar.v1',next?'collapsed':'expanded');}catch{}}
  const initials=user.name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'U';
  return <div className="crm-shell crm-reference" data-workspace-design="reference" data-crm-theme={theme} data-collapsed={collapsed} data-mobile-open={mobileOpen}>
@@ -63,7 +75,7 @@ export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()
    <nav aria-label="Workspace pages">{groups.map(group=><div className="crm-nav-group" key={group.label}><p className="crm-nav-caption">{group.label}</p>{group.items.map(item=><Link key={item.href} href={item.href} prefetch={false} onClick={()=>{if(mobileOpen)closeNavigation();}} title={collapsed?item.label:undefined} aria-label={item.label} aria-current={pathname===item.href?'page':undefined}><span className="crm-nav-icon"><CrmIcon name={item.icon}/></span><span className="crm-sidebar-text">{item.label}</span>{pathname===item.href&&<span className="crm-active-dot"/>}</Link>)}</div>)}</nav>
    <div className="crm-sidebar-bottom"><div className="crm-sidebar-workspace"><span className="crm-avatar">{initials}</span><span className="crm-sidebar-text"><strong>{user.name}</strong><small>{roleLabels[user.role]}</small></span></div><button className="crm-collapse-button" onClick={toggleSidebar} aria-label={collapsed?'Expand sidebar':'Collapse sidebar'} title={collapsed?'Expand sidebar':'Collapse sidebar'}><CrmIcon name="collapse"/><span className="crm-sidebar-text">Collapse sidebar</span></button></div>
   </aside>
-  <div className="crm-main" inert={mobileOpen}><header className="crm-topbar"><div className="crm-page-heading"><button ref={menuButton} className="crm-mobile-toggle crm-icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={()=>setMobileOpen(true)}><CrmIcon name="menu"/></button><div><span className="crm-breadcrumb">{currentGroup?.label??'Workspace'}</span><h2>{current?.label??'Access unavailable'}</h2></div></div><div className="crm-topbar-actions">
+  <div className="crm-main" inert={mobileOpen}><header ref={topbar} className="crm-topbar"><div className="crm-page-heading"><button ref={menuButton} className="crm-mobile-toggle crm-icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={()=>setMobileOpen(true)}><CrmIcon name="menu"/></button><div><span className="crm-breadcrumb">{currentGroup?.label??'Workspace'}</span><h2>{current?.label??'Access unavailable'}</h2></div></div><div className="crm-topbar-actions">
    {user.role!=='creative_analyst'&&<ReminderMenu/>}
    <details className="crm-top-menu crm-appearance-menu"><summary aria-label="Appearance" title="Appearance"><CrmIcon name={theme}/><span>Appearance</span></summary><div className="crm-menu-content"><strong>Appearance</strong><CrmThemeSwitch theme={theme} onChange={chooseTheme}/></div></details>
    <details className="crm-top-menu crm-profile-menu"><summary aria-label="User profile menu"><span className="crm-avatar">{initials}</span><span className="crm-profile-label">{user.name}</span><CrmIcon name="chevron"/></summary><div className="crm-menu-content"><strong>Your staff account</strong><dl><dt>Name</dt><dd>{user.name}</dd><dt>Role</dt><dd>{roleLabels[user.role]}</dd><dt>{user.username?'Username':'Email'}</dt><dd>{user.username||user.email||'Not required'}</dd></dl><form action={logoutAction}><button>Sign out</button></form></div></details>
