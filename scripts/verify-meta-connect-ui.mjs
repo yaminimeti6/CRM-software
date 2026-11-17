@@ -25,7 +25,19 @@ try{
  const response=await page.request.post(base+'/api/meta/start',{headers:{Origin:base}});
  assert.equal(response.status(),503);const body=await response.json();assert.equal(body.code,'META_SETUP_REQUIRED');assert(!JSON.stringify(body).includes('META_APP_'));
  await page.screenshot({path:root+'/meta-setup.png',mask:[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')]});
+
+ stage='intercepted configured-company UX (not real Facebook login)';
+ const fixture={missing:[],connect_ready:true,connection:null,accounts:[],links:{references:[],total:0,links:[]}};let selectedRequest;
+ await page.route('**/api/meta/admin*',async route=>{if(route.request().method()==='POST'){selectedRequest=route.request().postDataJSON();return route.fulfill({status:503,json:{error:'Browser-only intercepted selection; no account saved.'}});}return route.fulfill({json:fixture});});
+ const redirect='https://www.facebook.com/v26.0/dialog/oauth?client_id=123&config_id=456&redirect_uri='+encodeURIComponent(base+'/api/meta/callback')+'&response_type=code&state='+('a'.repeat(43));
+ await page.route('**/api/meta/start',route=>route.fulfill({json:{redirect}}));
+ await page.route('https://www.facebook.com/**',route=>route.fulfill({contentType:'text/html',body:'<h1>Browser-only intercepted provider navigation</h1>'}));
+ await page.goto(base+'/app/meta');await page.getByRole('button',{name:'Continue with Facebook',exact:true}).click();await page.waitForURL('https://www.facebook.com/**');
+ assert.equal(new URL(page.url()).searchParams.get('config_id'),'456');assert(!page.url().includes('client_secret'));
+ fixture.connection={state:'verified',expires_at:new Date(Date.now()+3600000).toISOString(),updated_at:new Date().toISOString()};fixture.accounts=[{id:'act_21',name:'Browser-only account',currency:'INR',timezone:'Asia/Kolkata',selected:false,discovered_current:true,interval_minutes:60,overlap_days:30,last_success_at:null,next_due_at:null,jobs:[]}];
+ await page.goto(base+'/app/meta');await page.getByRole('button',{name:'Use ad account Browser-only account',exact:true}).click();
+ await page.getByRole('alert').filter({hasText:'Browser-only intercepted selection'}).waitFor();assert.equal(selectedRequest.operation,'select');assert.equal(selectedRequest.account,'act_21');assert(!('organization_id' in selectedRequest));
  assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);assert.deepEqual(errors,[]);
- console.log('PASS: browser setup-pending message; Facebook button disabled; no credential names in UI; authenticated start HTTP 503 META_SETUP_REQUIRED; public records/passwords unchanged; no new leads/users.');
+ console.log('PASS: actual setup gate HTTP 503; intercepted configured Facebook redirect/account selection (not live login); no credential entry; public records/passwords unchanged; no new leads/users.');
 }catch(e){console.error('Stage: '+stage);reportFailure(e,'Meta connect UX');process.exitCode=1;}
 finally{await browser?.close();if(auth)await auth.auth.signOut({scope:'local'});await db?.end();}
