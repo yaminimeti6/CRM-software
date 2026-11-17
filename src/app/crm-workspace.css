@@ -259,3 +259,7 @@
 .crm-shell.crm-reference ::-webkit-scrollbar-button { display:none;width:0;height:0; }
 .crm-shell.crm-reference ::-webkit-scrollbar-corner { background:transparent; }
 @media(forced-colors:active) { .crm-shell.crm-reference,.crm-shell.crm-reference * { scrollbar-width:auto;scrollbar-color:auto; } }
+
+.crm-shell.crm-reference .performance-detail-heading { scroll-margin-top:84px;padding-top:20px;border-top:1px solid var(--crm-border); }
+.crm-shell.crm-reference .performance-detail-heading:focus { outline:2px solid var(--crm-accent);outline-offset:6px;border-radius:4px; }
+.crm-shell.crm-reference .performance-detail-selection { color:var(--crm-accent);font-size:14px;margin:6px 0 16px; }
