@@ -245,3 +245,17 @@
 .crm-shell.crm-reference .crm-menu-content .crm-theme-switch button[aria-pressed=true] { background:var(--crm-accent-soft);color:var(--crm-accent);border-color:var(--crm-accent); }
 @media(max-width:1100px) { .crm-shell.crm-reference .settings-section .status-setting-row { grid-template-columns: minmax(130px,1fr) minmax(120px,1fr) 60px;align-items:end; } }
 @media(max-width:600px) { .crm-shell.crm-reference .settings-section { padding:12px; }.crm-shell.crm-reference .settings-section>header { flex-wrap:wrap; }.crm-shell.crm-reference .settings-section .status-setting-row { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }.crm-shell.crm-reference .settings-section .column-setting-row { grid-template-columns:minmax(0,1fr) 85px 32px 32px;gap:6px; } }
+
+/* Slim, theme-aware scrollbars; preserve native keyboard, wheel and touch scrolling. */
+.crm-shell.crm-reference { --crm-scroll-thumb:#8493a8;--crm-scroll-hover:#60738e; }
+.crm-shell.crm-reference[data-crm-theme=dark] { --crm-scroll-thumb:#657387;--crm-scroll-hover:#91a1b8; }
+.crm-shell.crm-reference,.crm-shell.crm-reference * { scrollbar-width:thin;scrollbar-color:var(--crm-scroll-thumb) transparent; }
+.crm-shell.crm-reference .crm-sidebar { --crm-scroll-thumb:#9ca8b8;--crm-scroll-hover:#77879c; }
+.crm-shell.crm-reference[data-crm-theme=mixed] .crm-sidebar,.crm-shell.crm-reference[data-crm-theme=dark] .crm-sidebar { --crm-scroll-thumb:#7186a0;--crm-scroll-hover:#a1b3cb; }
+.crm-shell.crm-reference ::-webkit-scrollbar { width:6px;height:6px; }
+.crm-shell.crm-reference ::-webkit-scrollbar-track { background:transparent; }
+.crm-shell.crm-reference ::-webkit-scrollbar-thumb { background:var(--crm-scroll-thumb);border-radius:999px; }
+.crm-shell.crm-reference ::-webkit-scrollbar-thumb:hover { background:var(--crm-scroll-hover); }
+.crm-shell.crm-reference ::-webkit-scrollbar-button { display:none;width:0;height:0; }
+.crm-shell.crm-reference ::-webkit-scrollbar-corner { background:transparent; }
+@media(forced-colors:active) { .crm-shell.crm-reference,.crm-shell.crm-reference * { scrollbar-width:auto;scrollbar-color:auto; } }
