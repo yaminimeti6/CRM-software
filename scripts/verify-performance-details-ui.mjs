@@ -40,21 +40,33 @@ try{
 
 
 
- stage='performance metric details';mkdirSync(root,{recursive:true});await page.goto(base+'/app/performance');
- await page.locator('[data-metric=current_confirmed]').waitFor();
- for(const label of ['New leads received','Currently confirmed leads','Recorded attempts','Pending callbacks']){
-  const card=page.locator('.call-summary>div').filter({has:page.getByText(label,{exact:true})});
-  const value=Number(await card.locator('dd').innerText());
-  const reply=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/performance'&&!!r.request().postDataJSON()?.kind);
-  await card.getByRole('button',{name:'View '+label.toLowerCase()+' activity',exact:true}).click();assert.equal((await reply).status(),200);
-  await page.waitForFunction(()=>document.activeElement?.id==='performance-activity'&&document.querySelector('#performance-activity').getBoundingClientRect().top>=0&&document.querySelector('#performance-activity').getBoundingClientRect().top<innerHeight);
-  assert.equal(await page.locator('.performance-detail-selection').innerText(),label);
-  await page.waitForFunction(()=>!document.querySelector('[role=status]')?.textContent.includes('Loading activity'));
-  await page.locator('[data-activity-total]').waitFor();
-  if(['New leads received','Currently confirmed leads','Recorded attempts','Pending callbacks'].includes(label))assert.equal(Number((await page.locator('[data-activity-total]').innerText()).split(' ')[0]),value);
-  if(value===0)await page.getByText('No activity matches this breakdown.',{exact:true}).waitFor();
+
+ stage='performance side panel';mkdirSync(root,{recursive:true});await page.goto(base+'/app/performance');await page.locator('[data-metric=current_confirmed]').waitFor();
+ async function openMetric(label){
+  const card=page.locator('.call-summary>div').filter({has:page.getByText(label,{exact:true})}),button=card.getByRole('button',{name:'View '+label.toLowerCase()+' activity',exact:true});
+  const value=Number(await card.locator('dd').innerText());await button.scrollIntoViewIfNeeded();const y=await page.evaluate(()=>scrollY);
+  await button.click();const dialog=page.getByRole('dialog',{name:label,exact:true});await dialog.waitFor();
+  await page.waitForFunction(expected=>{const element=document.querySelector('[data-activity-total]');return element&&Number(element.textContent.split(' ')[0])===expected;},value);
+  assert.equal(await page.evaluate(()=>scrollY),y,'Opening details must not jump the report');
+  assert(await dialog.getByRole('button',{name:'Close performance details',exact:true}).isVisible());
+  if(value===0)await dialog.getByRole('heading',{name:'No matching records',exact:true}).waitFor();
+  if(value>0){assert(await dialog.locator('.performance-record-list>li').count()>0);assert.match(await dialog.getByRole('link',{name:/Open lead/}).first().getAttribute('href'),/q=[a-f0-9-]{36}/);}
+  return {dialog,button};
  }
+ for(const label of ['New leads received','Currently confirmed leads','Recorded attempts','Pending callbacks']){
+  const {dialog,button}=await openMetric(label);await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});assert(await button.evaluate(e=>e===document.activeElement));
+ }
+ for(const theme of ['Light','Dark','Mixed']){
+  await chooseTheme(page,theme);const {dialog}=await openMetric('Currently confirmed leads');
+  await page.screenshot({path:root+'/'+theme.toLowerCase()+'-panel.png',mask:[page.locator('.crm-sidebar-workspace .crm-sidebar-text'),page.locator('.crm-profile-label')]});
+  await dialog.getByRole('button',{name:'Close performance details',exact:true}).click();await dialog.waitFor({state:'hidden'});
+ }
+ await page.setViewportSize({width:390,height:844});await page.waitForTimeout(300);const {dialog}=await openMetric('Currently confirmed leads');
+ assert(await dialog.evaluate(e=>e.getBoundingClientRect().width<=innerWidth&&e.scrollWidth<=innerWidth));
+ await page.keyboard.press('Shift+Tab');assert(await dialog.evaluate(e=>e.contains(document.activeElement)),'Native modal keeps keyboard focus inside');
+ await page.screenshot({path:root+'/mobile-panel.png'});await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
+ assert.equal(await page.evaluate(()=>document.body.style.overflow),'');
  assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);
- console.log('PASS: real metric drilldown requests, focus/scroll to visible details, matching counts including current confirmed, explicit zero-record message; no business writes; all data/passwords unchanged.');
+ console.log('PASS: right-side modal, real metric counts/empty state, no page jump, Close/Escape and focus restoration, three themes, mobile focus containment; zero business writes; data/passwords unchanged.');
 }catch(e){console.error('Stage: '+stage);console.error(String(e.message).split('\n').slice(0,8).join('\n'));process.exitCode=1;}
 finally{await browser?.close();if(auth)await auth.auth.signOut({scope:'local'});await db?.end();}
