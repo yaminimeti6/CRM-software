@@ -52,6 +52,10 @@ try{
  const shell=page.locator('.crm-shell');
  if(await shell.getAttribute('data-collapsed')==='true')await page.getByRole('button',{name:'Expand sidebar',exact:true}).click();
  assert.equal(await page.locator('.crm-sidebar nav a[aria-current="page"]').count(),1);
+ const toggle=page.locator('.crm-brand .crm-sidebar-toggle');assert.equal(await toggle.textContent(),'');
+ assert((await toggle.boundingBox()).y<100,'Sidebar toggle belongs at the top');
+ assert.equal(await page.locator('.crm-sidebar-bottom .crm-collapse-button').count(),0);
+
  await page.screenshot({path:root+'/'+theme.toLowerCase()+'-expanded.png'});
  await page.getByRole('button',{name:'Collapse sidebar',exact:true}).click();
  await page.waitForTimeout(250);assert.equal(await shell.getAttribute('data-collapsed'),'true');

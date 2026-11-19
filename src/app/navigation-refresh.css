@@ -41,3 +41,13 @@
  .crm-shell.crm-reference .crm-page-heading h2 { font-size:16px; }
 }
 @media(prefers-reduced-motion:reduce){.crm-shell.crm-reference .crm-sidebar nav a { transition:none; }}
+
+/* Keep the icon-only desktop rail toggle beside the brand, including collapsed mode. */
+.crm-shell.crm-reference .crm-brand { position:relative; }
+.crm-shell.crm-reference .crm-brand .crm-sidebar-toggle { margin:0 0 0 auto;padding:6px;width:30px;height:30px;min-height:30px;flex:0 0 30px;border:0;background:transparent;color:var(--crm-nav-text);border-radius:8px; }
+.crm-shell.crm-reference .crm-brand .crm-sidebar-toggle:hover { background:var(--crm-nav-active); }
+.crm-shell.crm-reference .crm-sidebar-toggle svg { width:18px;height:18px; }
+.crm-shell.crm-reference[data-collapsed=true] .crm-brand { height:104px;min-height:104px;flex-direction:column;gap:10px;padding:0 0 10px; }
+.crm-shell.crm-reference[data-collapsed=true] .crm-brand .crm-sidebar-toggle { margin:0; }
+.crm-shell.crm-reference[data-collapsed=true] .crm-sidebar-toggle svg { transform:rotate(180deg); }
+@media(max-width:900px){.crm-shell.crm-reference .crm-brand .crm-sidebar-toggle { display:none; }}
