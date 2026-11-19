@@ -38,16 +38,14 @@ function ReminderMenu(){
 type User={name:string;email?:string|null;username?:string|null;role:Role;organizationId:string};
 export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()=>Promise<void>;children:ReactNode}){
  const [theme,chooseTheme]=useCrmTheme();
- const pathname=usePathname(),[collapsed,setCollapsed]=useState(false),[mobile,setMobile]=useState(false),[mobileOpen,setMobileOpen]=useState(false);
+ const pathname=usePathname(),[sidebarHover,setSidebarHover]=useState(false),[sidebarFocus,setSidebarFocus]=useState(false),[mobile,setMobile]=useState(false),[mobileOpen,setMobileOpen]=useState(false);
  const topbar=useRef<HTMLElement>(null);
  const side=useRef<HTMLElement>(null),menuButton=useRef<HTMLButtonElement>(null);
  function closeNavigation(){setMobileOpen(false);requestAnimationFrame(()=>menuButton.current?.focus());}
  const groups=crmNavigation(user.role),currentGroup=groups.find(group=>group.items.some(item=>item.href===pathname)),current=currentGroup?.items.find(item=>item.href===pathname);
  useEffect(()=>{
-  try{setCollapsed(localStorage.getItem('crm.ui.sidebar.v1')==='collapsed');}catch{}
   const query=matchMedia('(max-width: 900px)');const resize=()=>{setMobile(query.matches);if(!query.matches)setMobileOpen(false);};resize();query.addEventListener('change',resize);
-  const storage=(event:StorageEvent)=>{if(event.key==='crm.ui.sidebar.v1')setCollapsed(event.newValue==='collapsed');};window.addEventListener('storage',storage);
-  return()=>{query.removeEventListener('change',resize);window.removeEventListener('storage',storage);};
+  return()=>{query.removeEventListener('change',resize);};
  },[]);
  useEffect(()=>{
   if(!mobileOpen)return;const previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';side.current?.querySelector<HTMLElement>('button')?.focus();
@@ -65,14 +63,14 @@ export function CrmShell({user,logoutAction,children}:{user:User;logoutAction:()
   return()=>{document.removeEventListener('click',dismiss,true);document.removeEventListener('focusin',dismiss,true);document.removeEventListener('toggle',opened,true);document.removeEventListener('keydown',escape);};
  },[]);
  useEffect(()=>{topbar.current?.querySelectorAll<HTMLDetailsElement>('.crm-top-menu').forEach(menu=>{menu.open=false;});},[pathname]);
- function toggleSidebar(){const next=!collapsed;setCollapsed(next);try{localStorage.setItem('crm.ui.sidebar.v1',next?'collapsed':'expanded');}catch{}}
+
  const initials=user.name.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'U';
- return <div className="crm-shell crm-reference" data-workspace-design="reference" data-crm-theme={theme} data-collapsed={collapsed} data-mobile-open={mobileOpen}>
+ return <div className="crm-shell crm-reference" data-workspace-design="reference" data-crm-theme={theme} data-collapsed={!mobile&&!sidebarHover&&!sidebarFocus} data-sidebar-revealed={!mobile&&(sidebarHover||sidebarFocus)} data-mobile-open={mobileOpen}>
   <a className="crm-skip-link" href="#crm-page-content">Skip to content</a>
   {mobileOpen&&<button className="crm-mobile-backdrop" aria-label="Close navigation backdrop" onClick={()=>{closeNavigation();}}/>}
-  <aside ref={side} className="crm-sidebar" role={mobileOpen?'dialog':undefined} aria-modal={mobileOpen||undefined} aria-label="Main navigation" inert={mobile&&!mobileOpen}>
-   <div className="crm-brand"><span className="crm-brand-mark"><CrmIcon name="leads"/></span><div className="crm-sidebar-text"><strong>Staff CRM</strong><span>Team workspace</span></div><button className="crm-collapse-button crm-sidebar-toggle" onClick={toggleSidebar} aria-label={collapsed?'Expand sidebar':'Collapse sidebar'} title={collapsed?'Expand sidebar':'Collapse sidebar'}><CrmIcon name="collapse"/></button><button className="crm-mobile-close crm-icon-button" aria-label="Close navigation" onClick={()=>{closeNavigation();}}><CrmIcon name="close"/></button></div>
-   <nav aria-label="Workspace pages">{groups.map(group=><div className="crm-nav-group" key={group.label}><p className="crm-nav-caption">{group.label}</p>{group.items.map(item=><Link key={item.href} href={item.href} prefetch={false} onClick={()=>{if(mobileOpen)closeNavigation();}} title={collapsed?item.label:undefined} aria-label={item.label} aria-current={pathname===item.href?'page':undefined}><span className="crm-nav-icon"><CrmIcon name={item.icon}/></span><span className="crm-sidebar-text">{item.label}</span>{pathname===item.href&&<span className="crm-active-dot"/>}</Link>)}</div>)}</nav>
+  <aside onPointerEnter={e=>{if(e.pointerType==='mouse')setSidebarHover(true);}} onPointerLeave={()=>setSidebarHover(false)} onFocusCapture={e=>setSidebarFocus(e.target.matches(':focus-visible'))} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node|null))setSidebarFocus(false);}} ref={side} className="crm-sidebar" role={mobileOpen?'dialog':undefined} aria-modal={mobileOpen||undefined} aria-label="Main navigation" inert={mobile&&!mobileOpen}>
+   <div className="crm-brand"><span className="crm-brand-mark"><CrmIcon name="leads"/></span><div className="crm-sidebar-text"><strong>Staff CRM</strong><span>Team workspace</span></div><button className="crm-mobile-close crm-icon-button" aria-label="Close navigation" onClick={()=>{closeNavigation();}}><CrmIcon name="close"/></button></div>
+   <nav aria-label="Workspace pages">{groups.map(group=><div className="crm-nav-group" key={group.label}><p className="crm-nav-caption">{group.label}</p>{group.items.map(item=><Link key={item.href} href={item.href} prefetch={false} onClick={()=>{if(mobileOpen)closeNavigation();}} title={!sidebarHover&&!sidebarFocus?item.label:undefined} aria-label={item.label} aria-current={pathname===item.href?'page':undefined}><span className="crm-nav-icon"><CrmIcon name={item.icon}/></span><span className="crm-sidebar-text">{item.label}</span>{pathname===item.href&&<span className="crm-active-dot"/>}</Link>)}</div>)}</nav>
    <div className="crm-sidebar-bottom"><div className="crm-sidebar-workspace"><span className="crm-avatar">{initials}</span><span className="crm-sidebar-text"><strong>{user.name}</strong><small>{roleLabels[user.role]}</small></span></div></div>
   </aside>
   <div className="crm-main" inert={mobileOpen}><header ref={topbar} className="crm-topbar"><div className="crm-page-heading"><button ref={menuButton} className="crm-mobile-toggle crm-icon-button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={()=>setMobileOpen(true)}><CrmIcon name="menu"/></button><div><span className="crm-breadcrumb">{currentGroup?.label??'Workspace'}</span><h2>{current?.label??'Access unavailable'}</h2></div></div><div className="crm-topbar-actions">

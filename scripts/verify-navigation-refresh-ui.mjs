@@ -50,18 +50,22 @@ try{
  for(const theme of ['Light','Dark','Mixed']){
  await chooseTheme(page,theme);
  const shell=page.locator('.crm-shell');
- if(await shell.getAttribute('data-collapsed')==='true')await page.getByRole('button',{name:'Expand sidebar',exact:true}).click();
- assert.equal(await page.locator('.crm-sidebar nav a[aria-current="page"]').count(),1);
- const toggle=page.locator('.crm-brand .crm-sidebar-toggle');assert.equal(await toggle.textContent(),'');
- assert((await toggle.boundingBox()).y<100,'Sidebar toggle belongs at the top');
- assert.equal(await page.locator('.crm-sidebar-bottom .crm-collapse-button').count(),0);
-
- await page.screenshot({path:root+'/'+theme.toLowerCase()+'-expanded.png'});
- await page.getByRole('button',{name:'Collapse sidebar',exact:true}).click();
+ await page.mouse.move(800,80);await page.locator('.crm-page-heading h2').click();
  await page.waitForTimeout(250);assert.equal(await shell.getAttribute('data-collapsed'),'true');
- assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+ const mainBefore=await page.locator('.crm-main').boundingBox();
+ await page.locator('.crm-brand-mark').hover();await page.waitForTimeout(250);
+ assert.equal(await shell.getAttribute('data-collapsed'),'false');
+ assert.equal(await page.locator('.crm-sidebar nav a[aria-current="page"]').count(),1);
+ assert.equal(await page.locator('.crm-collapse-button').count(),0);
+ assert((await page.locator('.crm-sidebar').boundingBox()).width>=240);
+ assert.equal((await page.locator('.crm-main').boundingBox()).x,mainBefore.x,'Hover must not shift main content');
+ await page.screenshot({path:root+'/'+theme.toLowerCase()+'-expanded.png'});
+ await page.mouse.move(800,80);await page.waitForTimeout(250);
+ assert.equal(await shell.getAttribute('data-collapsed'),'true');
+ assert((await page.locator('.crm-sidebar').boundingBox()).width<=80);
  await page.screenshot({path:root+'/'+theme.toLowerCase()+'-collapsed.png'});
- await page.getByRole('button',{name:'Expand sidebar',exact:true}).click();
+
+
  }
  await page.getByLabel('Appearance',{exact:true}).click();
  await page.getByLabel('User profile menu',{exact:true}).click();
@@ -76,6 +80,6 @@ try{
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  stage='retired settings route';await page.goto(base+'/app/settings');await page.waitForURL(base+'/app');await page.locator('table[aria-label="Shared leads"] tbody tr').first().waitFor();
  assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);assert.deepEqual(await snapshot(),before);assert.deepEqual((await db.query("select id,md5(coalesce(encrypted_password,'')||coalesce(email,'')) h from auth.users order by id")).rows,passwords);
- console.log('PASS: expanded/collapsed navigation in three themes, active destination, exclusive top menus, Escape, mobile drawer, no page overflow, zero business writes, records/passwords unchanged.');
+ console.log('PASS: hover open/leave close without content shift in three themes, active destination, exclusive top menus, Escape, mobile drawer, no page overflow, zero business writes, records/passwords unchanged.');
 }catch(e){console.error('Stage: '+stage);console.error(String(e.message).split('\n').slice(0,8).join('\n'));process.exitCode=1;}
 finally{await browser?.close();if(auth)await auth.auth.signOut({scope:'local'});await db?.end();}
