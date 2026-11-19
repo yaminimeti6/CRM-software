@@ -1,1 +1,3 @@
-import {staffSession}from '@/lib/auth';import {redirect}from 'next/navigation';import {WorkspaceSettings}from './settings';export const dynamic='force-dynamic';export default async function Page(){const s=await staffSession();if(s.status!=='authorized')redirect('/login');if(s.user.role!=='admin')return <section><h1>Admin settings access required</h1></section>;return <WorkspaceSettings/>;}
+import {redirect} from 'next/navigation';
+// Column layout and status presentation are managed by the CRM.
+export default function Page(){redirect('/app');}
