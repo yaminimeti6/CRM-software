@@ -1,0 +1,43 @@
+/* Navigation refresh: quiet icon rail, pill selection and separated header actions. */
+.crm-shell.crm-reference .crm-sidebar { padding:16px 12px 12px;background:var(--crm-nav-bg); }
+.crm-shell.crm-reference .crm-brand { padding:4px 10px 22px;height:76px;min-height:76px;gap:12px; }
+.crm-shell.crm-reference .crm-brand-mark { border-radius:12px;background:linear-gradient(145deg,#517bff,#3053df);box-shadow:0 5px 14px #2446bf25; }
+.crm-shell.crm-reference .crm-brand strong { font-size:18px;letter-spacing:-.5px; }
+.crm-shell.crm-reference .crm-brand .crm-sidebar-text>span { margin-top:3px;font-size:11px;opacity:.7; }
+.crm-shell.crm-reference .crm-nav-group { margin-bottom:22px; }
+.crm-shell.crm-reference .crm-nav-caption { padding:8px 14px;font-size:10px;letter-spacing:.12em;opacity:.75; }
+.crm-shell.crm-reference .crm-sidebar nav a { position:relative;min-height:46px;margin:5px 0;padding:10px 14px;border-radius:12px;gap:12px;font-weight:500;transition:background .16s ease,color .16s ease; }
+.crm-shell.crm-reference .crm-sidebar .crm-nav-icon { background:transparent;width:22px;height:22px;flex-basis:22px;border-radius:0;opacity:.8; }
+.crm-shell.crm-reference .crm-sidebar nav a[aria-current=page] { background:#e8efff;color:#244fcb;box-shadow:none;font-weight:650; }
+.crm-shell.crm-reference .crm-sidebar nav a[aria-current=page] .crm-nav-icon { background:transparent;opacity:1; }
+.crm-shell.crm-reference .crm-sidebar nav a[aria-current=page] svg { color:currentColor; }
+.crm-shell.crm-reference .crm-active-dot { display:none; }
+.crm-shell.crm-reference .crm-sidebar nav a[aria-current=page]::before { content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:4px;background:#527fff; }
+.crm-shell.crm-reference .crm-sidebar-bottom { padding-top:12px; }
+.crm-shell.crm-reference .crm-sidebar-workspace { padding:10px;border:0;background:var(--crm-nav-active);border-radius:12px; }
+.crm-shell.crm-reference .crm-collapse-button { justify-content:center;border:1px solid var(--crm-nav-border);border-radius:10px;min-height:36px;padding:8px;margin-top:10px; }
+.crm-shell.crm-reference .crm-topbar { min-height:76px;padding:12px 26px;background:var(--crm-surface);border-bottom:1px solid var(--crm-border); }
+.crm-shell.crm-reference .crm-page-heading>div { display:flex;flex-direction:column;align-items:flex-start;gap:4px; }
+.crm-shell.crm-reference .crm-page-heading h2 { font-size:18px;letter-spacing:-.35px;line-height:1.2; }
+.crm-shell.crm-reference .crm-breadcrumb { font-size:11px;line-height:1.2; }
+.crm-shell.crm-reference .crm-breadcrumb::after { content:none; }
+.crm-shell.crm-reference .crm-topbar-actions { gap:10px; }
+.crm-shell.crm-reference .crm-top-menu>summary { min-height:40px;padding:8px 12px;border:1px solid var(--crm-border);border-radius:12px;background:var(--crm-soft);gap:8px; }
+.crm-shell.crm-reference .crm-top-menu>summary:hover,.crm-shell.crm-reference .crm-top-menu[open]>summary { background:var(--crm-accent-soft); }
+.crm-shell.crm-reference .crm-profile-menu>summary { background:transparent; }
+.crm-shell.crm-reference .crm-topbar .crm-avatar { width:28px;height:28px;border-radius:9px; }
+.crm-shell.crm-reference .crm-menu-content { margin-top:10px;border-radius:14px; }
+.crm-shell.crm-reference[data-crm-theme=mixed] .crm-sidebar { background:linear-gradient(175deg,#23354e,#1c2b40); }
+.crm-shell.crm-reference[data-crm-theme=mixed] .crm-sidebar nav a[aria-current=page],.crm-shell.crm-reference[data-crm-theme=dark] .crm-sidebar nav a[aria-current=page] { background:#344d73;color:#edf4ff; }
+.crm-shell.crm-reference[data-crm-theme=dark] .crm-topbar { background:var(--crm-surface); }
+.crm-shell.crm-reference[data-collapsed=true] .crm-sidebar { padding:16px 10px 12px; }
+.crm-shell.crm-reference[data-collapsed=true] .crm-sidebar nav a { padding:10px; }
+.crm-shell.crm-reference[data-collapsed=true] .crm-brand { padding:4px 0 22px;justify-content:center; }
+.crm-shell.crm-reference[data-collapsed=true] .crm-sidebar-workspace { padding:8px 0; }
+@media(max-width:700px){
+ .crm-shell.crm-reference .crm-topbar { padding:10px 14px;min-height:68px; }
+ .crm-shell.crm-reference .crm-topbar-actions { gap:6px; }
+ .crm-shell.crm-reference .crm-top-menu>summary { padding:7px;min-height:36px;border-radius:10px; }
+ .crm-shell.crm-reference .crm-page-heading h2 { font-size:16px; }
+}
+@media(prefers-reduced-motion:reduce){.crm-shell.crm-reference .crm-sidebar nav a { transition:none; }}
