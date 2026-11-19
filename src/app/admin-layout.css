@@ -1,0 +1,65 @@
+/* Shared admin layout rules. These override legacy max-width/margin rules deliberately. */
+.crm-shell.crm-reference { --admin-gap:16px;--admin-control-height:40px; }
+.crm-shell.crm-reference .crm-content :is(.catalog-workspace,.meta-workspace,.imports-workspace,.workspace-settings-page) { min-width:0; }
+.crm-shell.crm-reference .crm-content :is(.catalog-workspace,.meta-workspace,.imports-workspace,.workspace-settings-page) :is(input,select,textarea) { max-width:100%;margin:0; }
+.crm-shell.crm-reference .crm-content :is(.catalog-workspace,.meta-workspace,.imports-workspace,.workspace-settings-page) :is(input:not([type=checkbox]):not([type=hidden]),select) { height:var(--admin-control-height);min-height:var(--admin-control-height); }
+.crm-shell.crm-reference .crm-content :is(.catalog-workspace,.meta-workspace,.imports-workspace,.workspace-settings-page) button { min-height:var(--admin-control-height);margin:0; }
+.crm-shell.crm-reference .crm-content :is(.catalog-workspace,.meta-workspace,.imports-workspace,.workspace-settings-page)>h2 { margin:28px 0 16px; }
+.crm-shell.crm-reference .sources-toolbar { display:grid;grid-template-columns:minmax(240px,1fr) 150px max-content max-content;gap:var(--admin-gap);align-items:end;padding:16px 0; }
+.crm-shell.crm-reference .sources-toolbar label:first-child { max-width:none;min-width:0; }
+.crm-shell.crm-reference .sources-toolbar label { min-width:0;gap:6px; }
+.crm-shell.crm-reference .sources-toolbar :is(input,select,button,.crm-action-link) { height:var(--admin-control-height);min-height:var(--admin-control-height);margin:0; }
+.crm-shell.crm-reference .sources-toolbar>button,.crm-shell.crm-reference .sources-toolbar>.crm-action-link { align-self:end;justify-self:start; }
+.crm-shell.crm-reference .settings-section .status-setting-row { grid-template-columns:minmax(160px,1.4fr) minmax(150px,1fr) 64px 80px 84px 120px;gap:var(--admin-gap);align-items:end;padding:14px; }
+.crm-shell.crm-reference .settings-section .status-setting-row>label { max-width:none;width:100%;min-width:0;margin:0;gap:6px; }
+.crm-shell.crm-reference .settings-section .status-setting-row :is(input:not([type=checkbox]),select) { width:100%;max-width:none;height:var(--admin-control-height);margin:0; }
+.crm-shell.crm-reference .settings-section .status-setting-row>label:has(input[type=checkbox]) { height:var(--admin-control-height);align-self:end;align-items:center;gap:8px; }
+.crm-shell.crm-reference .settings-section .status-setting-row>button { height:var(--admin-control-height);padding:8px 12px; }
+.crm-shell.crm-reference .settings-section .column-setting-row { display:grid;grid-template-columns:minmax(180px,1fr) 112px 40px 40px;width:100%;max-width:720px;gap:var(--admin-gap);align-items:end;min-height:76px;padding:12px 0; }
+.crm-shell.crm-reference .settings-section .column-setting-row>label { min-width:0;max-width:none;display:grid;gap:6px;margin:0;font-size:12px; }
+.crm-shell.crm-reference .settings-section .column-setting-row>label:first-child { display:flex;align-items:center;gap:10px;min-width:0;height:var(--admin-control-height);font-size:14px; }
+.crm-shell.crm-reference .settings-section .column-setting-row input[type=number] { width:100%;margin:0;height:var(--admin-control-height); }
+.crm-shell.crm-reference .settings-section .column-setting-row>button { width:40px;height:var(--admin-control-height);padding:8px;align-self:end; }
+.crm-shell.crm-reference .catalog-workspace form.add-form { grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--admin-gap);padding:20px;align-items:end; }
+.crm-shell.crm-reference .catalog-workspace form.add-form>label { display:grid;gap:6px;max-width:none;min-width:0;margin:0;font-size:13px; }
+.crm-shell.crm-reference .catalog-workspace form.add-form>label :is(input,select) { width:100%; }
+.crm-shell.crm-reference .admin-form-actions { grid-column:1/-1;display:flex;align-items:center;justify-content:flex-end;gap:var(--admin-gap);padding-top:4px; }
+.crm-shell.crm-reference .admin-form-actions label.checkbox { display:flex;align-items:center;gap:8px;margin:0 auto 0 0;font-size:13px; }
+.crm-shell.crm-reference .admin-form-actions input[type=checkbox] { width:16px;height:16px; }
+.crm-shell.crm-reference :is(.catalog-record-grid,.catalog-version-grid,.meta-account-grid) { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--admin-gap);margin:16px 0 24px; }
+.crm-shell.crm-reference :is(.catalog-record-grid,.catalog-version-grid,.meta-account-grid)>.call-panel { display:flex;flex-direction:column;align-items:stretch;gap:12px;min-width:0;margin:0;padding:20px;border-radius:10px; }
+.crm-shell.crm-reference :is(.catalog-record-grid,.catalog-version-grid,.meta-account-grid)>.call-panel :is(h3,p) { margin:0;overflow-wrap:anywhere; }
+.crm-shell.crm-reference :is(.catalog-record-grid,.catalog-version-grid)>.call-panel>button { align-self:flex-start; }
+.crm-shell.crm-reference .catalog-record-meta { font-size:12px;color:var(--crm-muted); }
+.crm-shell.crm-reference .meta-sync-settings { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--admin-gap);max-width:720px;margin:24px 0 16px; }
+.crm-shell.crm-reference .meta-sync-settings>label { display:grid;gap:6px;margin:0;min-width:0;font-size:13px; }
+.crm-shell.crm-reference .meta-sync-settings input { width:100%; }
+.crm-shell.crm-reference .meta-account-actions,.crm-shell.crm-reference .import-batch-actions { display:flex;flex-wrap:wrap;align-items:center;gap:12px; }
+.crm-shell.crm-reference .meta-account-actions button { max-width:100%;overflow-wrap:anywhere; }
+.crm-shell.crm-reference .import-batch-actions { margin:16px 0 24px; }
+.crm-shell.crm-reference .import-batch-actions>button { flex:0 1 auto; }
+.crm-shell.crm-reference .import-catalog-note { display:grid;grid-template-columns:minmax(0,1fr) max-content;align-items:center;gap:var(--admin-gap);padding:16px;background:var(--crm-soft);border:1px solid var(--crm-border);border-radius:8px;margin:20px 0; }
+.crm-shell.crm-reference .import-catalog-note>p { margin:0;font-size:13px;color:var(--crm-muted); }
+.crm-shell.crm-reference .imports-workspace>form { display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:var(--admin-gap);align-items:end;padding:20px;margin:20px 0;background:var(--crm-soft);border:1px solid var(--crm-border);border-radius:8px; }
+.crm-shell.crm-reference .imports-workspace>form label { display:grid;gap:8px;min-width:0;margin:0; }
+.crm-shell.crm-reference .imports-workspace>form input[type=file] { width:100%;height:auto;min-height:40px; }
+.crm-shell.crm-reference .imports-workspace>label { display:grid;gap:6px;max-width:720px;margin:16px 0;font-size:13px; }
+@media(max-width:1250px) {
+ .crm-shell.crm-reference .sources-toolbar { grid-template-columns:minmax(0,1fr) max-content; }
+ .crm-shell.crm-reference .settings-section .status-setting-row { grid-template-columns:repeat(3,minmax(0,1fr)); }
+ .crm-shell.crm-reference .settings-section .status-setting-row>button { width:100%; }
+}
+@media(max-width:1050px) { .crm-shell.crm-reference :is(.catalog-record-grid,.catalog-version-grid,.meta-account-grid) { grid-template-columns:minmax(0,1fr); } }
+@media(max-width:650px) {
+ .crm-shell.crm-reference .sources-toolbar { grid-template-columns:minmax(0,1fr);gap:12px; }
+ .crm-shell.crm-reference .sources-toolbar :is(button,.crm-action-link) { justify-self:stretch;width:100%; }
+ .crm-shell.crm-reference .settings-section .status-setting-row { grid-template-columns:repeat(2,minmax(0,1fr));gap:12px; }
+ .crm-shell.crm-reference .settings-section .column-setting-row { grid-template-columns:minmax(0,1fr) 80px 36px 36px;gap:8px; }
+ .crm-shell.crm-reference .settings-section .column-setting-row>button { width:36px; }
+ .crm-shell.crm-reference .catalog-workspace form.add-form,.crm-shell.crm-reference .meta-sync-settings,.crm-shell.crm-reference .imports-workspace>form { grid-template-columns:minmax(0,1fr);padding:16px; }
+ .crm-shell.crm-reference .meta-sync-settings { padding:0; }
+ .crm-shell.crm-reference .import-catalog-note { grid-template-columns:minmax(0,1fr); }
+ .crm-shell.crm-reference .import-catalog-note>.crm-action-link { justify-self:start; }
+}
+.crm-shell.crm-reference .meta-connect-actions { display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0; }
+.crm-shell.crm-reference .sources-heading>button { min-height:40px;margin:0; }
