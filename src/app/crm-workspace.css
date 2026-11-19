@@ -381,3 +381,17 @@
 .crm-shell.crm-reference .source-editor-form details label { margin-top:14px; }
 .crm-shell.crm-reference .source-editor-form footer { display:flex;gap:10px;padding-top:8px; }
 @media(max-width:650px) { .crm-shell.crm-reference .sources-heading { align-items:start; }.crm-shell.crm-reference .sources-toolbar label:first-child { max-width:none;flex-basis:100%; }.crm-shell.crm-reference .source-editor>header,.crm-shell.crm-reference .source-editor-body { padding:16px; } }
+
+/* Action links retain real navigation/download semantics with consistent affordances. */
+.crm-shell.crm-reference .crm-action-link { display:inline-flex;align-items:center;justify-content:center;gap:8px;max-width:100%;min-height:36px;padding:8px 12px;border:1px solid var(--crm-border);border-radius:8px;background:var(--crm-control);color:var(--crm-text);font-size:13px;font-weight:600;line-height:1.4;text-decoration:none;vertical-align:middle;transition:background .15s ease,border-color .15s ease,color .15s ease; }
+.crm-shell.crm-reference .crm-action-link>svg { flex:0 0 16px; }
+.crm-shell.crm-reference .crm-action-link>span { min-width:0;overflow-wrap:anywhere; }
+.crm-shell.crm-reference .crm-action-link:hover { background:var(--crm-accent-soft);border-color:var(--crm-accent);color:var(--crm-accent);text-decoration:none; }
+.crm-shell.crm-reference .crm-action-link:focus-visible { outline:2px solid var(--crm-accent);outline-offset:3px; }
+.crm-shell.crm-reference .crm-action-link-primary { background:#2563eb;border-color:#2563eb;color:#fff; }
+.crm-shell.crm-reference .crm-action-link-primary:hover { background:#1d4ed8;border-color:#1d4ed8;color:#fff; }
+.crm-shell.crm-reference .simple-calling-actions .crm-action-link { margin:0 2px;border:1px solid var(--crm-border);border-radius:7px;padding:7px 10px; }
+.crm-shell.crm-reference .follow-up-row-actions .crm-action-link { min-height:32px;font-size:12px;padding:6px 9px; }
+.crm-shell.crm-reference .source-editor-form details .crm-action-link { margin-top:14px; }
+.crm-shell.crm-reference .performance-open-lead.crm-action-link { color:var(--crm-accent);background:var(--crm-accent-soft); }
+@media(prefers-reduced-motion:reduce) { .crm-shell.crm-reference .crm-action-link { transition:none; } }

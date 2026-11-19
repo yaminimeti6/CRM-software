@@ -1,4 +1,6 @@
 'use client';
+import {ActionLink} from '@/app/action-link';
+
 import { AuthFrame } from '../auth-frame';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 export default function Join() {
@@ -14,5 +16,5 @@ export default function Join() {
         {!info && <form onSubmit={e => { e.preventDefault(); void validate(code.trim()); }}><label>Invitation code<input value={code} onChange={e => setCode(e.target.value)} required autoComplete="off" /></label><button disabled={pending}>Check invitation</button></form>}
         {info && info.state !== 'pending' && <p role="alert">This invitation is {info.state === 'accepted' ? 'already used' : info.state}. Ask your Admin for a new invitation. Existing accounts should sign in.</p>}
         {info?.state === 'pending' && <form onSubmit={accept}><p>Display name: <strong>{info.name}</strong> · Role: {info.role.replaceAll('_', ' ')}</p><label>Username<input name="username" required minLength={3} maxLength={32} pattern="[A-Za-z][A-Za-z0-9_]{2,31}" autoComplete="username" /></label><p>Usernames are unique across this CRM, case-insensitive, 3–32 characters. Display names are separate.</p><label>Password<input name="password" type="password" required minLength={12} maxLength={1024} autoComplete="new-password" /></label><label>Confirm password<input name="confirm" type="password" required minLength={12} maxLength={1024} autoComplete="new-password" /></label><button disabled={pending}>{pending ? 'Activating…' : 'Activate account'}</button></form>}
-        <p><a href="/login">Sign in</a></p></section></AuthFrame>;
+        <p><ActionLink href="/login">Sign in</ActionLink></p></section></AuthFrame>;
 }
