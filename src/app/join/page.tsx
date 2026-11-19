@@ -1,5 +1,5 @@
 'use client';
-import {AuthFrame} from '../auth-frame';
+import { AuthFrame } from '../auth-frame';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 export default function Join() {
     const [invitation, setInvitation] = useState(''), [code, setCode] = useState(''), [info, setInfo] = useState<{ name: string; role: string; state: string } | null>(null), [pending, setPending] = useState(false), [error, setError] = useState(''); const initialized = useRef(false);

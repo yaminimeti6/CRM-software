@@ -13,3 +13,4 @@ test('dynamic source/version identities isolate equal question names and preserv
  for(const id of [outsider,analyst]){await as(id);assert.equal((await db.query('select * from public.source_quiz_fields')).rows.length,0);if(id===analyst)await assert.rejects(db.query('select * from public.quiz_columns()'),/Operational/);else assert.equal((await db.query('select * from public.quiz_columns()')).rows.length,0);}
  await as(actor);await assert.rejects(db.query('delete from public.source_quiz_fields'),/permission/);assert.equal((await db.query('select * from public.leads where id=$1',[manual.id])).rows[0].answers.Shared,'manual');
  }finally{await pg.close();}});
+
